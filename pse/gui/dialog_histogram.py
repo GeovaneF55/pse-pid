@@ -1,6 +1,6 @@
 """ Bibliotecas externas. """
-from PyQt5.QtWidgets import (QDialog, QHBoxLayout, QRadioButton)
 from PyQt5.QtCore import (Qt)
+from PyQt5.QtWidgets import (QDialog, QHBoxLayout, QRadioButton)
 
 class DialogHistogram(QDialog):
     def __init__(self, parent = None):

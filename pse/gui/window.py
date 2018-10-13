@@ -1,7 +1,7 @@
 """ Bibliotecas externas. """
+from PyQt5.QtCore import (Qt)
 from PyQt5.QtGui import (QIcon,
                          QPixmap)
-from PyQt5.QtCore import (Qt)
 from PyQt5.QtWidgets import (QAction,
                              qApp,
                              QHBoxLayout,
@@ -12,8 +12,8 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 """ Bibliotecas locais. """
-from gui.dialog_interpolations import (DialogInterpolations)
-from gui.dialog_filters import (DialogFilters)
+from gui.dialog_interpolation import (DialogInterpolation)
+from gui.dialog_filter import (DialogFilter)
 from gui.dialog_histogram import (DialogHistogram)
 from gui.toolbar import (ToolBar)
 from util.resources import ICONS
@@ -73,13 +73,13 @@ class Window(QMainWindow):
         
         # Filtros
         filtersAct = QAction(QIcon(ICONS['filters']), 'Filtros', self.toolbar)
-        filtersAct.triggered.connect(lambda: DialogFilters.getResults(self))
+        filtersAct.triggered.connect(lambda: DialogFilter.getResults(self))
         self.toolbar.addAction(filtersAct)
 
         # Interpolação
         interpAct = QAction(QIcon(ICONS['interpolation']), 'Interpolação',
                             self.toolbar)
-        interpAct.triggered.connect(lambda: DialogInterpolations.getResults(self))
+        interpAct.triggered.connect(lambda: DialogInterpolation.getResults(self))
         self.toolbar.addAction(interpAct)
 
         # Histograma
