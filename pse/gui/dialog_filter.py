@@ -16,6 +16,8 @@ class DialogFilter(QDialog):
     def __init__(self, parent = None):
         super(DialogFilter, self).__init__(parent)
 
+        self.selectedFilter = {'filter': DialogFilter.Filter.MIN,
+                               'mask': '3x3'}
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.initUI()
 
@@ -104,10 +106,15 @@ class DialogFilter(QDialog):
 
 
     def selectFilter(self, selectedKey):
+        """ Seta as configurações do filtro selecionado."""
+        
         for key, _ in self.radioButtons.items():
             selected = key == selectedKey
             self.labels[key].setEnabled(selected)
             self.masks[key].setEnabled(selected)
+
+        self.selectedFilter = {'filter': selectedKey,
+                               'mask': self.masks[key].currentText()}
 
 
     @staticmethod
@@ -119,4 +126,5 @@ class DialogFilter(QDialog):
 
         dialog = DialogFilter(parent)
         result = dialog.exec_()
-        return ({}, result)
+
+        return (dialog.selectedFilter, result)

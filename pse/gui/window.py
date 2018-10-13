@@ -4,6 +4,7 @@ from PyQt5.QtGui import (QIcon,
                          QPixmap)
 from PyQt5.QtWidgets import (QAction,
                              qApp,
+                             QDialog,
                              QHBoxLayout,
                              QDesktopWidget,
                              QFileDialog,
@@ -73,7 +74,7 @@ class Window(QMainWindow):
         
         # Filtros
         filtersAct = QAction(QIcon(ICONS['filters']), 'Filtros', self.toolbar)
-        filtersAct.triggered.connect(lambda: DialogFilter.getResults(self))
+        filtersAct.triggered.connect(self.applyFilter)
         self.toolbar.addAction(filtersAct)
 
         # Interpolação
@@ -94,6 +95,16 @@ class Window(QMainWindow):
         
         self.addToolBar(self.toolbar)
 
+
+    def applyFilter(self):
+        (data, ok) = DialogFilter.getResults(self)
+
+        if ok == QDialog.Rejected:
+            return None
+
+        (row, col) = data['mask'].split('x')
+        (row, col) = int(row), int(col)
+        
         
     def getImage(self):
         (imagePath, _) = QFileDialog.getOpenFileName(self, 'Carregar Imagem',
