@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import (QAction,
 from gui.toolbar import (ToolBar)
 from util.resources import ICONS
 from gui.dialog_histogram import (DialogHistogram)
+from gui.dialog_interpolations import (DialogInterpolations)
 
 class Window(QMainWindow):
     def __init__(self):
@@ -77,7 +78,7 @@ class Window(QMainWindow):
         # Interpolação
         interpAct = QAction(QIcon(ICONS['interpolation']), 'Interpolação',
                             self.toolbar)
-        interpAct.triggered.connect(lambda: None)
+        interpAct.triggered.connect(lambda: DialogInterpolations.getResults(self))
         self.toolbar.addAction(interpAct)
 
         # Histograma
