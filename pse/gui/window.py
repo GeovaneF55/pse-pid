@@ -12,8 +12,9 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 """ Bibliotecas locais. """
+from gui.dialog_filters import (DialogFilters)
 from gui.toolbar import (ToolBar)
-from util.resources import ICONS
+from util.resources import (ICONS)
 
 class Window(QMainWindow):
     def __init__(self):
@@ -70,7 +71,7 @@ class Window(QMainWindow):
         
         # Filtros
         filtersAct = QAction(QIcon(ICONS['filters']), 'Filtros', self.toolbar)
-        filtersAct.triggered.connect(lambda: None)
+        filtersAct.triggered.connect(lambda: DialogFilters.getResults(self))
         self.toolbar.addAction(filtersAct)
 
         # Interpolação
