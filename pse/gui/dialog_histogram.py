@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import (QDialog,
                              QFormLayout,
                              QHBoxLayout,                             
                              QRadioButton)
-
+from PyQt5.QtCore import (Qt)
                              
 class DialogHistogram(QDialog):
     def __init__(self, parent = None):
@@ -43,7 +43,7 @@ class DialogHistogram(QDialog):
             QDialogButtonBox.Ok, Qt.Horizontal, self)
         buttons.accepted.connect(self.accept)
         layout.addRow(buttons)
-
+        
         self.setLayout(layout)
         self.setWindowTitle('Histograms')
 
