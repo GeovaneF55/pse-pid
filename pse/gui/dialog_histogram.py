@@ -4,9 +4,8 @@ from PyQt5.QtWidgets import (QDialog,
                              QFormLayout,
                              QHBoxLayout,                             
                              QRadioButton)
-from PyQt5.QtCore import (Qt)
 
-
+                             
 class DialogHistogram(QDialog):
     def __init__(self, parent = None):
         super(DialogHistogram, self).__init__(parent)

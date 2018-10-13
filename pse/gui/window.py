@@ -1,9 +1,10 @@
 """ Bibliotecas externas. """
+from PyQt5.QtCore import (Qt)
 from PyQt5.QtGui import (QIcon,
                          QPixmap)
-from PyQt5.QtCore import (Qt)
 from PyQt5.QtWidgets import (QAction,
                              qApp,
+                             QDialog,
                              QHBoxLayout,
                              QDesktopWidget,
                              QFileDialog,
@@ -12,10 +13,11 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 """ Bibliotecas locais. """
+from gui.dialog_interpolation import (DialogInterpolation)
+from gui.dialog_filter import (DialogFilter)
+from gui.dialog_histogram import (DialogHistogram)
 from gui.toolbar import (ToolBar)
 from util.resources import ICONS
-from gui.dialog_histogram import (DialogHistogram)
-from gui.dialog_interpolations import (DialogInterpolations)
 
 class Window(QMainWindow):
     def __init__(self):
@@ -72,13 +74,13 @@ class Window(QMainWindow):
         
         # Filtros
         filtersAct = QAction(QIcon(ICONS['filters']), 'Filtros', self.toolbar)
-        filtersAct.triggered.connect(lambda: None)
+        filtersAct.triggered.connect(self.applyFilter)
         self.toolbar.addAction(filtersAct)
 
         # Interpolação
         interpAct = QAction(QIcon(ICONS['interpolation']), 'Interpolação',
                             self.toolbar)
-        interpAct.triggered.connect(lambda: DialogInterpolations.getResults(self))
+        interpAct.triggered.connect(lambda: DialogInterpolation.getResults(self))
         self.toolbar.addAction(interpAct)
 
         # Histograma
@@ -93,6 +95,16 @@ class Window(QMainWindow):
         
         self.addToolBar(self.toolbar)
 
+
+    def applyFilter(self):
+        (data, ok) = DialogFilter.getResults(self)
+
+        if ok == QDialog.Rejected:
+            return None
+
+        (row, col) = data['mask'].split('x')
+        (row, col) = int(row), int(col)
+        
         
     def getImage(self):
         (imagePath, _) = QFileDialog.getOpenFileName(self, 'Carregar Imagem',
