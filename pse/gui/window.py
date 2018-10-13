@@ -12,9 +12,11 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 """ Bibliotecas locais. """
+from gui.dialog_interpolations import (DialogInterpolations)
 from gui.dialog_filters import (DialogFilters)
+from gui.dialog_histogram import (DialogHistogram)
 from gui.toolbar import (ToolBar)
-from util.resources import (ICONS)
+from util.resources import ICONS
 
 class Window(QMainWindow):
     def __init__(self):
@@ -77,12 +79,12 @@ class Window(QMainWindow):
         # Interpolação
         interpAct = QAction(QIcon(ICONS['interpolation']), 'Interpolação',
                             self.toolbar)
-        interpAct.triggered.connect(lambda: None)
+        interpAct.triggered.connect(lambda: DialogInterpolations.getResults(self))
         self.toolbar.addAction(interpAct)
 
         # Histograma
         histAct = QAction(QIcon(ICONS['histogram']), 'Histograma', self.toolbar)
-        histAct.triggered.connect(lambda: None)
+        histAct.triggered.connect(lambda: DialogHistogram.getResults(self))
         self.toolbar.addAction(histAct)
 
         # Salvar Imagem
