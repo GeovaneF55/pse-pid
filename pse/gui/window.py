@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import (QAction,
 """ Bibliotecas locais. """
 from gui.toolbar import (ToolBar)
 from util.resources import ICONS
+from gui.dialog_histogram import (DialogHistogram)
 
 class Window(QMainWindow):
     def __init__(self):
@@ -81,7 +82,7 @@ class Window(QMainWindow):
 
         # Histograma
         histAct = QAction(QIcon(ICONS['histogram']), 'Histograma', self.toolbar)
-        histAct.triggered.connect(lambda: None)
+        histAct.triggered.connect(lambda: DialogHistogram.getResults(self))
         self.toolbar.addAction(histAct)
 
         # Salvar Imagem
