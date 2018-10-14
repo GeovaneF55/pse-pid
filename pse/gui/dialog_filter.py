@@ -11,13 +11,13 @@ from PyQt5.QtWidgets import (QComboBox,
                              QWidget)
 
 class DialogFilter(QDialog):
-    Filter = Enum('Filter', 'MIN MAX')
+    Filter = Enum('Filter', 'NEG MIN MAX')
     
     def __init__(self, parent = None):
         super(DialogFilter, self).__init__(parent)
 
-        self.selectedFilter = {'filter': DialogFilter.Filter.MIN,
-                               'mask': '3x3'}
+        self.selectedFilter = {'filter': DialogFilter.Filter.NEG,
+                               'mask': None}
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.initUI()
 
@@ -29,12 +29,13 @@ class DialogFilter(QDialog):
 
         # Filtros.
         self.labels = {}
+        self.labels[DialogFilter.Filter.NEG] = QLabel('Negativo Digital')
         self.labels[DialogFilter.Filter.MIN] = QLabel('Mínimo')
         self.labels[DialogFilter.Filter.MAX] = QLabel('Máximo')
 
         labelsLayout = QVBoxLayout()
         for key, label in self.labels.items():
-            if key != DialogFilter.Filter.MIN:
+            if key != DialogFilter.Filter.NEG:
                 label.setEnabled(False)
                 
             labelsLayout.addWidget(label)
@@ -44,6 +45,8 @@ class DialogFilter(QDialog):
 
         # Máscaras.
         self.masks = {}
+        self.masks[DialogFilter.Filter.NEG] = QComboBox()
+        
         self.masks[DialogFilter.Filter.MIN] = QComboBox()
         self.masks[DialogFilter.Filter.MIN].addItems(['3x3', '5x5', '7x7',
                                                       '9x9', '11x11'])
@@ -54,9 +57,7 @@ class DialogFilter(QDialog):
 
         masksLayout = QVBoxLayout()
         for key, mask in self.masks.items():
-            if key != DialogFilter.Filter.MIN:
-                mask.setEnabled(False)
-                
+            mask.setEnabled(False)
             masksLayout.addWidget(mask)
 
         masksWidget = QWidget()
@@ -64,8 +65,13 @@ class DialogFilter(QDialog):
 
         # Seleção do filtro.
         self.radioButtons = {}
+        self.radioButtons[DialogFilter.Filter.NEG] = QRadioButton()
+        self.radioButtons[DialogFilter.Filter.NEG].setChecked(True)
+        self.radioButtons[DialogFilter.Filter.NEG].\
+            clicked.connect(lambda: self.selectFilter(DialogFilter.Filter.NEG))
+        
         self.radioButtons[DialogFilter.Filter.MIN] = QRadioButton()
-        self.radioButtons[DialogFilter.Filter.MIN].setChecked(True)
+        self.radioButtons[DialogFilter.Filter.MIN].setChecked(False)
         self.radioButtons[DialogFilter.Filter.MIN].\
             clicked.connect(lambda: self.selectFilter(DialogFilter.Filter.MIN))        
         
@@ -112,6 +118,9 @@ class DialogFilter(QDialog):
             selected = key == selectedKey
             self.labels[key].setEnabled(selected)
             self.masks[key].setEnabled(selected)
+
+            if key == DialogFilter.Filter.NEG:
+                self.masks[key].setEnabled(False)
 
         self.selectedFilter = {'filter': selectedKey,
                                'mask': self.masks[key].currentText()}
