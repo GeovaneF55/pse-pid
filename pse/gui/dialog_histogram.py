@@ -1,7 +1,11 @@
 """ Bibliotecas externas. """
+from PyQt5.QtWidgets import (QDialog,
+                             QDialogButtonBox,
+                             QFormLayout,
+                             QHBoxLayout,                             
+                             QRadioButton)
 from PyQt5.QtCore import (Qt)
-from PyQt5.QtWidgets import (QDialog, QHBoxLayout, QRadioButton)
-
+                             
 class DialogHistogram(QDialog):
     def __init__(self, parent = None):
         super(DialogHistogram, self).__init__(parent)
@@ -10,25 +14,36 @@ class DialogHistogram(QDialog):
 
 
     def initUI(self):        
-        layout = QHBoxLayout()
-
+        rButtons = QHBoxLayout()
+        
         self.b1 = QRadioButton('RGB')
         self.b1.setChecked(True)
         self.b1.toggled.connect(lambda:self.btnState(self.b1))
-        layout.addWidget(self.b1) 
+        rButtons.addWidget(self.b1) 
 
         self.b2 = QRadioButton('RED')
         self.b2.toggled.connect(lambda:self.btnState(self.b2))
-        layout.addWidget(self.b2)
+        rButtons.addWidget(self.b2)
 
         self.b3 = QRadioButton('GREEN')
         self.b3.toggled.connect(lambda:self.btnState(self.b3))
-        layout.addWidget(self.b3) 
+        rButtons.addWidget(self.b3) 
 
         self.b4 = QRadioButton('BLUE')
         self.b4.toggled.connect(lambda:self.btnState(self.b4))
-        layout.addWidget(self.b4)       
+        rButtons.addWidget(self.b4)    
 
+        layout = QFormLayout(self)
+        layout.addRow(rButtons)   
+
+        #Adcionar o Histograma à Widget
+
+        # Butões de OK e Cancel
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.Ok, Qt.Horizontal, self)
+        buttons.accepted.connect(self.accept)
+        layout.addRow(buttons)
+        
         self.setLayout(layout)
         self.setWindowTitle('Histograms')
 
