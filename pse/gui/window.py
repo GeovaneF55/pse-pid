@@ -23,6 +23,8 @@ from util.resources import (ICONS)
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.setWindowIcon(QIcon(ICONS['pse']))
         
         self.image = {'original': None, 'processed': None}
         
@@ -81,7 +83,7 @@ class Window(QMainWindow):
         # Interpolação
         interpAct = QAction(QIcon(ICONS['interpolation']), 'Interpolação',
                             self.toolbar)
-        interpAct.triggered.connect(lambda: DialogInterpolation.getResults(self))
+        interpAct.triggered.connect(self.applyInterpolation)
         self.toolbar.addAction(interpAct)
 
         # Histograma
@@ -111,6 +113,16 @@ class Window(QMainWindow):
         
         self.image['processed'] \
             .setPixmap(QPixmap.fromImage(newImage).scaled(512, 512))
+
+
+    def applyInterpolation(self):
+        (data, ok) = DialogInterpolation.getResults(self)
+
+        if ok == QDialog.Rejected:
+            return None
+
+        print(data)
+
         
     def getImage(self):
         (imagePath, ok) = QFileDialog \
