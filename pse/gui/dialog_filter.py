@@ -1,5 +1,4 @@
 """ Bibliotecas externas. """
-from enum import Enum
 from PyQt5.QtCore import (Qt)
 from PyQt5.QtWidgets import (QComboBox,
                              QDialogButtonBox,
@@ -10,14 +9,16 @@ from PyQt5.QtWidgets import (QComboBox,
                              QVBoxLayout,
                              QWidget)
 
+""" Biliotecas locais. """
+from algorithm.filter.low_pass import (LowPassFilter)
+
 class DialogFilter(QDialog):
-    Filter = Enum('Filter', 'NEG MIN MAX')
-    
     def __init__(self, parent = None):
         super(DialogFilter, self).__init__(parent)
 
-        self.selectedFilter = {'filter': DialogFilter.Filter.NEG,
-                               'mask': None}
+        self.selectedKey = LowPassFilter.BOX
+        self.selectedFilter = {'filter': self.selectedKey,
+                               'mask': '3x3'}
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.initUI()
 
@@ -29,13 +30,13 @@ class DialogFilter(QDialog):
 
         # Filtros.
         self.labels = {}
-        self.labels[DialogFilter.Filter.NEG] = QLabel('Negativo Digital')
-        self.labels[DialogFilter.Filter.MIN] = QLabel('Mínimo')
-        self.labels[DialogFilter.Filter.MAX] = QLabel('Máximo')
+        self.labels[LowPassFilter.BOX] = QLabel('Box')
+        self.labels[LowPassFilter.MIN] = QLabel('Mínimo')
+        self.labels[LowPassFilter.MAX] = QLabel('Máximo')
 
         labelsLayout = QVBoxLayout()
         for key, label in self.labels.items():
-            if key != DialogFilter.Filter.NEG:
+            if key != LowPassFilter.BOX:
                 label.setEnabled(False)
                 
             labelsLayout.addWidget(label)
@@ -45,19 +46,19 @@ class DialogFilter(QDialog):
 
         # Máscaras.
         self.masks = {}
-        self.masks[DialogFilter.Filter.NEG] = QComboBox()
-        
-        self.masks[DialogFilter.Filter.MIN] = QComboBox()
-        self.masks[DialogFilter.Filter.MIN].addItems(['3x3', '5x5', '7x7',
-                                                      '9x9', '11x11'])
+        self.masks[LowPassFilter.BOX] = QComboBox()
+        self.masks[LowPassFilter.BOX].addItems(['3x3', '5x5', '7x7'])
+        self.masks[LowPassFilter.MIN] = QComboBox()
+        self.masks[LowPassFilter.MIN].addItems(['3x3', '5x5', '7x7'])
 
-        self.masks[DialogFilter.Filter.MAX] = QComboBox()
-        self.masks[DialogFilter.Filter.MAX].addItems(['3x3', '5x5', '7x7',
-                                                      '9x9', '11x11'])
+        self.masks[LowPassFilter.MAX] = QComboBox()
+        self.masks[LowPassFilter.MAX].addItems(['3x3', '5x5', '7x7'])
 
         masksLayout = QVBoxLayout()
         for key, mask in self.masks.items():
-            mask.setEnabled(False)
+            if key != LowPassFilter.BOX:
+                mask.setEnabled(False)
+                
             masksLayout.addWidget(mask)
 
         masksWidget = QWidget()
@@ -65,20 +66,20 @@ class DialogFilter(QDialog):
 
         # Seleção do filtro.
         self.radioButtons = {}
-        self.radioButtons[DialogFilter.Filter.NEG] = QRadioButton()
-        self.radioButtons[DialogFilter.Filter.NEG].setChecked(True)
-        self.radioButtons[DialogFilter.Filter.NEG].\
-            clicked.connect(lambda: self.selectFilter(DialogFilter.Filter.NEG))
+        self.radioButtons[LowPassFilter.BOX] = QRadioButton()
+        self.radioButtons[LowPassFilter.BOX].setChecked(True)
+        self.radioButtons[LowPassFilter.BOX].\
+            clicked.connect(lambda: self.selectFilter(LowPassFilter.BOX))
         
-        self.radioButtons[DialogFilter.Filter.MIN] = QRadioButton()
-        self.radioButtons[DialogFilter.Filter.MIN].setChecked(False)
-        self.radioButtons[DialogFilter.Filter.MIN].\
-            clicked.connect(lambda: self.selectFilter(DialogFilter.Filter.MIN))        
+        self.radioButtons[LowPassFilter.MIN] = QRadioButton()
+        self.radioButtons[LowPassFilter.MIN].setChecked(False)
+        self.radioButtons[LowPassFilter.MIN].\
+            clicked.connect(lambda: self.selectFilter(LowPassFilter.MIN))        
         
-        self.radioButtons[DialogFilter.Filter.MAX]= QRadioButton()
-        self.radioButtons[DialogFilter.Filter.MAX].setChecked(False)
-        self.radioButtons[DialogFilter.Filter.MAX].\
-            clicked.connect(lambda: self.selectFilter(DialogFilter.Filter.MAX))
+        self.radioButtons[LowPassFilter.MAX]= QRadioButton()
+        self.radioButtons[LowPassFilter.MAX].setChecked(False)
+        self.radioButtons[LowPassFilter.MAX].\
+            clicked.connect(lambda: self.selectFilter(LowPassFilter.MAX))
         
         radioButtonsLayout = QVBoxLayout()
         for key, button in self.radioButtons.items():
@@ -87,7 +88,7 @@ class DialogFilter(QDialog):
         radioButtonsWidget = QWidget()
         radioButtonsWidget.setLayout(radioButtonsLayout)
         
-        # Layout intermediário.
+        # Layout.
         sublayout = QHBoxLayout()
         sublayout.addWidget(labelsWidget)
         sublayout.addWidget(masksWidget)
@@ -97,7 +98,7 @@ class DialogFilter(QDialog):
         buttons = QDialogButtonBox(
             QDialogButtonBox.Ok | QDialogButtonBox.Cancel,
             Qt.Horizontal, self)
-        buttons.accepted.connect(self.accept)
+        buttons.accepted.connect(self.getFilter)
         buttons.rejected.connect(self.reject)
 
         subwidget = QWidget()
@@ -111,6 +112,12 @@ class DialogFilter(QDialog):
         self.setLayout(mainLayout)
 
 
+    def getFilter(self):
+        self.selectedFilter = {'filter': self.selectedKey,
+                               'mask': self.masks[self.selectedKey].currentText()}
+
+        return self.accept()
+    
     def selectFilter(self, selectedKey):
         """ Seta as configurações do filtro selecionado."""
         
@@ -119,12 +126,7 @@ class DialogFilter(QDialog):
             self.labels[key].setEnabled(selected)
             self.masks[key].setEnabled(selected)
 
-            if key == DialogFilter.Filter.NEG:
-                self.masks[key].setEnabled(False)
-
-        self.selectedFilter = {'filter': selectedKey,
-                               'mask': self.masks[key].currentText()}
-
+        self.selectedKey = selectedKey
 
     @staticmethod
     def getResults(parent = None):

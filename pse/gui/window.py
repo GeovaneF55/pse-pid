@@ -13,11 +13,12 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 """ Bibliotecas locais. """
+from algorithm.filter import (low_pass)
 from gui.dialog_interpolation import (DialogInterpolation)
 from gui.dialog_filter import (DialogFilter)
 from gui.dialog_histogram import (DialogHistogram)
 from gui.toolbar import (ToolBar)
-from util.resources import ICONS
+from util.resources import (ICONS)
 
 class Window(QMainWindow):
     def __init__(self):
@@ -102,13 +103,22 @@ class Window(QMainWindow):
         if ok == QDialog.Rejected:
             return None
 
-        (row, col) = data['mask'].split('x')
-        (row, col) = int(row), int(col)
+        (row, _) = data['mask'].split('x')
+        row = int(row)
+
+        newImage = low_pass.applyFilter(self.image['processed'].pixmap().toImage(),
+                                        row, data['filter'])
         
+        self.image['processed'] \
+            .setPixmap(QPixmap.fromImage(newImage).scaled(512, 512))
         
     def getImage(self):
-        (imagePath, _) = QFileDialog.getOpenFileName(self, 'Carregar Imagem',
-                                                     filter='Images (*.png *.jpg)')
+        (imagePath, ok) = QFileDialog \
+            .getOpenFileName(self, 'Carregar Imagem',
+                             filter='Images (*.png *.jpg)')
+
+        if not ok:
+            return
 
         print(imagePath)
         if self.image['original']:
@@ -121,7 +131,7 @@ class Window(QMainWindow):
         self.image['processed'] = QLabel()
         self.image['processed'].setAlignment(Qt.AlignVCenter)
         
-        pixmap = QPixmap(imagePath).scaled(512, 512, Qt.KeepAspectRatio)
+        pixmap = QPixmap(imagePath).scaled(512, 512)
         
         self.image['original'].setPixmap(pixmap)
         self.image['processed'].setPixmap(pixmap)
