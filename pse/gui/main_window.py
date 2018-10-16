@@ -14,9 +14,9 @@ from PyQt5.QtWidgets import (QAction,
 
 """ Bibliotecas locais. """
 from algorithm.filter import (low_pass)
-from gui.dialog_interpolation import (DialogInterpolation)
 from gui.dialog_filter import (DialogFilter)
 from gui.dialog_histogram import (DialogHistogram)
+from gui.dialog_interpolation import (DialogInterpolation)
 from gui.toolbar import (ToolBar)
 from util.resources import (ICONS)
 
