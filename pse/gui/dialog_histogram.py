@@ -2,12 +2,14 @@
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
+from PyQt5.QtCore import (Qt)
+from PyQt5.QtGui import (QPixmap)
 from PyQt5.QtWidgets import (QDialog,
                              QDialogButtonBox,
                              QFormLayout,
-                             QHBoxLayout,                             
+                             QHBoxLayout,
+                             QLabel,                             
                              QRadioButton)
-from PyQt5.QtCore import (Qt)                             
 
 """ Biliotecas locais. """
 from util.resources import (HIST)
@@ -45,9 +47,13 @@ class DialogHistogram(QDialog):
         rButtons.addWidget(self.b4)    
 
         layout = QFormLayout(self)
-        layout.addRow(rButtons)   
+        layout.addRow(rButtons) 
 
         #Adcionar o Histograma à Widget
+        hLayout = QHBoxLayout()
+        self.imgLabel = QLabel()
+        hLayout.addWidget(self.imgLabel)
+        layout.addRow(hLayout)
 
         # Butões de OK e Cancel
         buttons = QDialogButtonBox(
@@ -62,24 +68,33 @@ class DialogHistogram(QDialog):
     def btnState(self, b):
         if b.text() == 'RBG':
             if b.isChecked() == True:
-                print(b.text() + ' is selected')
-            else:
-                print(b.text() + ' is deselected')
-
+                pixmap = QPixmap(HIST + 'hist.png').scaled(256, 256)
+                self.imgLabel.setPixmap(pixmap)
+                self.imgLabel.show()
+                
         if b.text() == 'RED':
             if b.isChecked() == True:
+                pixmap = QPixmap(HIST + 'red.png').scaled(256, 256)
+                self.imgLabel.setPixmap(pixmap)
+                self.imgLabel.show()
                 print(b.text() + ' is selected')
             else:
                 print(b.text() + ' is deselected')
 
         if b.text() == 'GREEN':
             if b.isChecked() == True:
+                pixmap = QPixmap(HIST + 'green.png').scaled(256, 256)
+                self.imgLabel.setPixmap(pixmap)
+                self.imgLabel.show()
                 print(b.text() + ' is selected')
             else:
                 print(b.text() + ' is deselected')
 
         if b.text() == 'BLUE':
             if b.isChecked() == True:
+                pixmap = QPixmap(HIST + 'blue.png').scaled(256, 256)
+                self.imgLabel.setPixmap(pixmap)
+                self.imgLabel.show()
                 print(b.text() + ' is selected')
             else:
                 print(b.text() + ' is deselected')
