@@ -20,11 +20,9 @@ from gui.dialog_histogram import (DialogHistogram)
 from gui.toolbar import (ToolBar)
 from util.resources import (ICONS)
 
-class Window(QMainWindow):
+class MainWindow(QMainWindow):    
     def __init__(self):
         super().__init__()
-
-        self.setWindowIcon(QIcon(ICONS['pse']))
         
         self.image = {'original': None, 'processed': None}
         
@@ -41,19 +39,20 @@ class Window(QMainWindow):
         principal do programa.
         """
         
-        self.resize(1024, 512)
+        self.setFixedSize(512, 256)
         self.center()
         self.setWindowTitle('PSE')
+        self.setWindowIcon(QIcon(ICONS['pse']))
         self.createToolBar()
 
         self.layout = QHBoxLayout()
         
         centralWidget = QWidget()
         centralWidget.setLayout(self.layout)
-        
         self.setCentralWidget(centralWidget)
-        self.show()
 
+        self.show()
+        
         
     def center(self):
         """ Centraliza a janela principal, em relação ao Desktop. """
@@ -112,7 +111,7 @@ class Window(QMainWindow):
                                         row, data['filter'])
         
         self.image['processed'] \
-            .setPixmap(QPixmap.fromImage(newImage).scaled(512, 512))
+            .setPixmap(QPixmap.fromImage(newImage).scaled(256, 256))
 
 
     def applyInterpolation(self):
@@ -142,7 +141,7 @@ class Window(QMainWindow):
         self.image['processed'] = QLabel()
         self.image['processed'].setAlignment(Qt.AlignVCenter)
         
-        pixmap = QPixmap(imagePath).scaled(512, 512)
+        pixmap = QPixmap(imagePath).scaled(256, 256)
         
         self.image['original'].setPixmap(pixmap)
         self.image['processed'].setPixmap(pixmap)

@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (QComboBox,
                              QVBoxLayout,
                              QWidget)
 
+
 """ Biliotecas locais. """
 from algorithm.filter.low_pass import (LowPassFilter)
 
@@ -31,6 +32,8 @@ class DialogFilter(QDialog):
         # Filtros.
         self.labels = {}
         self.labels[LowPassFilter.BOX] = QLabel('Box')
+        self.labels[LowPassFilter.MEDIAN] = QLabel('Mediana')
+        self.labels[LowPassFilter.MODE] = QLabel('Moda')
         self.labels[LowPassFilter.MIN] = QLabel('Mínimo')
         self.labels[LowPassFilter.MAX] = QLabel('Máximo')
 
@@ -48,6 +51,13 @@ class DialogFilter(QDialog):
         self.masks = {}
         self.masks[LowPassFilter.BOX] = QComboBox()
         self.masks[LowPassFilter.BOX].addItems(['3x3', '5x5', '7x7'])
+
+        self.masks[LowPassFilter.MEDIAN] = QComboBox()
+        self.masks[LowPassFilter.MEDIAN].addItems(['3x3', '5x5', '7x7'])
+
+        self.masks[LowPassFilter.MODE] = QComboBox()
+        self.masks[LowPassFilter.MODE].addItems(['3x3', '5x5', '7x7'])
+        
         self.masks[LowPassFilter.MIN] = QComboBox()
         self.masks[LowPassFilter.MIN].addItems(['3x3', '5x5', '7x7'])
 
@@ -68,17 +78,27 @@ class DialogFilter(QDialog):
         self.radioButtons = {}
         self.radioButtons[LowPassFilter.BOX] = QRadioButton()
         self.radioButtons[LowPassFilter.BOX].setChecked(True)
-        self.radioButtons[LowPassFilter.BOX].\
+        self.radioButtons[LowPassFilter.BOX]. \
             clicked.connect(lambda: self.selectFilter(LowPassFilter.BOX))
+
+        self.radioButtons[LowPassFilter.MEDIAN] = QRadioButton()
+        self.radioButtons[LowPassFilter.MEDIAN].setChecked(False)
+        self.radioButtons[LowPassFilter.MEDIAN]. \
+            clicked.connect(lambda: self.selectFilter(LowPassFilter.MEDIAN))
+
+        self.radioButtons[LowPassFilter.MODE] = QRadioButton()
+        self.radioButtons[LowPassFilter.MODE].setChecked(False)
+        self.radioButtons[LowPassFilter.MODE]. \
+            clicked.connect(lambda: self.selectFilter(LowPassFilter.MODE))
         
         self.radioButtons[LowPassFilter.MIN] = QRadioButton()
         self.radioButtons[LowPassFilter.MIN].setChecked(False)
-        self.radioButtons[LowPassFilter.MIN].\
+        self.radioButtons[LowPassFilter.MIN]. \
             clicked.connect(lambda: self.selectFilter(LowPassFilter.MIN))        
         
         self.radioButtons[LowPassFilter.MAX]= QRadioButton()
         self.radioButtons[LowPassFilter.MAX].setChecked(False)
-        self.radioButtons[LowPassFilter.MAX].\
+        self.radioButtons[LowPassFilter.MAX]. \
             clicked.connect(lambda: self.selectFilter(LowPassFilter.MAX))
         
         radioButtonsLayout = QVBoxLayout()
