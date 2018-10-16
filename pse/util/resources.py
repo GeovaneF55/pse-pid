@@ -10,5 +10,6 @@ ICONS = {
     'filters': PATH + 'images/filters.png',
     'histogram': PATH + 'images/histogram.png',
     'open': PATH + 'images/open.png',
-    'save': PATH + 'images/save.png'
+    'save': PATH + 'images/save.png',
+    'reset': PATH + 'images/reset.png'
 }
