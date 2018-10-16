@@ -102,8 +102,8 @@ class Window(QMainWindow):
     def applyFilter(self):
         (data, ok) = DialogFilter.getResults(self)
 
-        if ok == QDialog.Rejected:
-            return None
+        if not ok or not self.image['processed']:
+            return
 
         (row, _) = data['mask'].split('x')
         row = int(row)
@@ -132,7 +132,6 @@ class Window(QMainWindow):
         if not ok:
             return
 
-        print(imagePath)
         if self.image['original']:
             self.layout.removeWidget(self.image['original'])
             self.layout.removeWidget(self.image['processed'])
