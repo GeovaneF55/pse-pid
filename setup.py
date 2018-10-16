@@ -8,6 +8,5 @@ setup(
     install_requires=[
         'pyqt5 >= 5.11.3',
         'numpy',
-        'scipy',
     ],
 )

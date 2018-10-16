@@ -14,9 +14,9 @@ from PyQt5.QtWidgets import (QAction,
 
 """ Bibliotecas locais. """
 from algorithm.filter import (low_pass)
-from gui.dialog_interpolation import (DialogInterpolation)
 from gui.dialog_filter import (DialogFilter)
 from gui.dialog_histogram import (DialogHistogram)
+from gui.dialog_interpolation import (DialogInterpolation)
 from gui.toolbar import (ToolBar)
 from util.resources import (ICONS)
 
@@ -91,6 +91,11 @@ class MainWindow(QMainWindow):
                                 .getResults(self.image['original'].pixmap().toImage(), self))
         self.toolbar.addAction(histAct)
 
+        # Resetar Imagem
+        resetAct = QAction(QIcon(ICONS['reset']), 'Resetar Imagem', self.toolbar)
+        resetAct.triggered.connect(self.resetImage)
+        self.toolbar.addAction(resetAct)
+
         # Salvar Imagem
         saveAct = QAction(QIcon(ICONS['save']), 'Salvar Imagem', self.toolbar)
         saveAct.triggered.connect(self.saveImage)
@@ -149,8 +154,12 @@ class MainWindow(QMainWindow):
         
         self.layout.addWidget(self.image['original'])
         self.layout.addWidget(self.image['processed'])
-        
-        
+
+
+    def resetImage(self):
+        self.image['processed'].setPixmap(self.image['original'].pixmap())
+
+   
     def saveImage(self):
         (imagePath, _) = QFileDialog.getSaveFileName(self, 'Salvar Imagem',
                                                      filter='Images (*.png *.jpg)')
