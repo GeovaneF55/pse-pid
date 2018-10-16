@@ -90,6 +90,11 @@ class MainWindow(QMainWindow):
         histAct.triggered.connect(lambda: DialogHistogram.getResults(self))
         self.toolbar.addAction(histAct)
 
+        # Resetar Imagem
+        resetAct = QAction(QIcon(ICONS['reset']), 'Resetar Imagem', self.toolbar)
+        resetAct.triggered.connect(self.resetImage)
+        self.toolbar.addAction(resetAct)
+
         # Salvar Imagem
         saveAct = QAction(QIcon(ICONS['save']), 'Salvar Imagem', self.toolbar)
         saveAct.triggered.connect(self.saveImage)
@@ -148,8 +153,12 @@ class MainWindow(QMainWindow):
         
         self.layout.addWidget(self.image['original'])
         self.layout.addWidget(self.image['processed'])
-        
-        
+
+
+    def resetImage(self):
+        self.image['processed'].setPixmap(self.image['original'].pixmap())
+
+   
     def saveImage(self):
         (imagePath, _) = QFileDialog.getSaveFileName(self, 'Salvar Imagem',
                                                      filter='Images (*.png *.jpg)')
