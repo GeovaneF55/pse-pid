@@ -87,7 +87,8 @@ class MainWindow(QMainWindow):
 
         # Histograma
         histAct = QAction(QIcon(ICONS['histogram']), 'Histograma', self.toolbar)
-        histAct.triggered.connect(lambda: DialogHistogram.getResults(self))
+        histAct.triggered.connect(lambda: DialogHistogram
+                                .getResults(self.image['original'].pixmap().toImage(), self))
         self.toolbar.addAction(histAct)
 
         # Salvar Imagem

@@ -1,19 +1,30 @@
 """ Bibliotecas externas. """
+import cv2
+from matplotlib import pyplot as plt
+import numpy as np
 from PyQt5.QtWidgets import (QDialog,
                              QDialogButtonBox,
                              QFormLayout,
                              QHBoxLayout,                             
                              QRadioButton)
-from PyQt5.QtCore import (Qt)
+from PyQt5.QtCore import (Qt)                             
+
+""" Biliotecas locais. """
+from util.resources import (HIST)
                              
 class DialogHistogram(QDialog):
-    def __init__(self, parent = None):
+    def __init__(self, origImage, parent = None):
         super(DialogHistogram, self).__init__(parent)
+        
+        # Salvar imagem temporariamente
+        origImage.save(HIST + 'orig_tmp.jpg')
+
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.initUI()
 
 
-    def initUI(self):        
+    def initUI(self):          
+        self.saveHistograms()      
         rButtons = QHBoxLayout()
         
         self.b1 = QRadioButton('RGB')
@@ -74,9 +85,33 @@ class DialogHistogram(QDialog):
                 print(b.text() + ' is deselected')
 
 
+    def saveHistograms(self):
+        img = cv2.imread(HIST + 'orig_tmp.jpg')
+        plt.hist(img.ravel(), 256, [0,256])
+        plt.savefig(HIST + 'hist.png')
+        plt.clf()
+
+        histr = cv2.calcHist([img],[0],None,[256],[0,256])
+        plt.plot(histr, color = 'b')
+        plt.xlim([0,256])
+        plt.savefig(HIST + 'blue.png')
+        plt.clf()
+
+        histr = cv2.calcHist([img],[1],None,[256],[0,256])
+        plt.plot(histr, color = 'g')
+        plt.xlim([0,256])
+        plt.savefig(HIST + 'green.png')
+        plt.clf()
+
+        histr = cv2.calcHist([img],[2],None,[256],[0,256])
+        plt.plot(histr, color = 'r')
+        plt.xlim([0,256])
+        plt.savefig(HIST + 'red.png')
+
+
     @staticmethod
-    def getResults(parent = None):
+    def getResults(origImage, parent = None):
         """ Método estático que cria o dialog e retorna true com sua finalização """
-        dialog = DialogHistogram(parent)
+        dialog = DialogHistogram(origImage, parent)
         result = dialog.exec_()
         return True
