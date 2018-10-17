@@ -42,13 +42,19 @@ class MainWidget(QWidget):
         # nada a fazer.
         if self.grid == oldGrid or not self.items:
             return
-        
+ 
         # Repreenche o grid, de acordo com as novas dimensões.
         self.fillGrid(self.items)
         
 
     def addGridItem(self, text, pixmap, i, j):
-        """ Add an item to the grid. """
+        """ Add an item to the grid.
+
+        @param text String
+        @param pixmap QPixmap
+        @param i int
+        @param j int
+        """
 
         textLabel = QLabel(text)
         textLabel.setStyleSheet('QColor {color: #424242;}')
@@ -79,7 +85,7 @@ class MainWidget(QWidget):
 
         # Caso imagem ainda não tenha sido carregada ou imagem original
         # não exista, retornar.
-        if not items or not items[0]['pixmap']:
+        if not items:
             return
 
         # Limpa todo o grid antes de repreencher.

@@ -122,10 +122,13 @@ class MainWindow(QMainWindow):
         
         if data['filter'] in low_pass.Filter:
             filterFn = low_pass.applyFilter
-            label = low_pass.FilterLabel[data['filter']]
+            label = low_pass.FilterLabel[data['filter']] + \
+                ' ({})'.format(data['mask'])
+            
         elif data['filter'] in morph.Filter:
             filterFn = morph.applyFilter
-            label = morph.FilterLabel[data['filter']]
+            label = morph.FilterLabel[data['filter']] + \
+                ' ({})'.format(data['mask'])
 
         lastItem = len(self.centralWidget.items) - 1
         newImage = filterFn(self.centralWidget.items[lastItem]['pixmap'].toImage(),
