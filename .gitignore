@@ -114,3 +114,5 @@ dmypy.json
 # others
 .vscode/
 resources/histograms/*
+
+!.keep
