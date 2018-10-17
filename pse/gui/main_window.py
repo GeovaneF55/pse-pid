@@ -15,9 +15,9 @@ from PyQt5.QtWidgets import (QAction,
 """ Bibliotecas locais. """
 from algorithm.filter import (low_pass)
 from algorithm.interpolation import (interpolation)
-from gui.dialog_interpolation import (DialogInterpolation)
 from gui.dialog_filter import (DialogFilter)
 from gui.dialog_histogram import (DialogHistogram)
+from gui.dialog_interpolation import (DialogInterpolation)
 from gui.toolbar import (ToolBar)
 from util.resources import (ICONS)
 
@@ -88,7 +88,8 @@ class MainWindow(QMainWindow):
 
         # Histograma
         histAct = QAction(QIcon(ICONS['histogram']), 'Histograma', self.toolbar)
-        histAct.triggered.connect(lambda: DialogHistogram.getResults(self))
+        histAct.triggered.connect(lambda: DialogHistogram
+                                .getResults(self.image['original'].pixmap().toImage(), self))
         self.toolbar.addAction(histAct)
 
         # Resetar Imagem

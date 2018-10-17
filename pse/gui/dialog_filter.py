@@ -33,7 +33,6 @@ class DialogFilter(QDialog):
         self.labels = {}
         self.labels[LowPassFilter.BOX] = QLabel('Box')
         self.labels[LowPassFilter.MEDIAN] = QLabel('Mediana')
-        self.labels[LowPassFilter.MODE] = QLabel('Moda')
         self.labels[LowPassFilter.MIN] = QLabel('Mínimo')
         self.labels[LowPassFilter.MAX] = QLabel('Máximo')
 
@@ -54,9 +53,6 @@ class DialogFilter(QDialog):
 
         self.masks[LowPassFilter.MEDIAN] = QComboBox()
         self.masks[LowPassFilter.MEDIAN].addItems(['3x3', '5x5', '7x7'])
-
-        self.masks[LowPassFilter.MODE] = QComboBox()
-        self.masks[LowPassFilter.MODE].addItems(['3x3', '5x5', '7x7'])
         
         self.masks[LowPassFilter.MIN] = QComboBox()
         self.masks[LowPassFilter.MIN].addItems(['3x3', '5x5', '7x7'])
@@ -85,11 +81,6 @@ class DialogFilter(QDialog):
         self.radioButtons[LowPassFilter.MEDIAN].setChecked(False)
         self.radioButtons[LowPassFilter.MEDIAN]. \
             clicked.connect(lambda: self.selectFilter(LowPassFilter.MEDIAN))
-
-        self.radioButtons[LowPassFilter.MODE] = QRadioButton()
-        self.radioButtons[LowPassFilter.MODE].setChecked(False)
-        self.radioButtons[LowPassFilter.MODE]. \
-            clicked.connect(lambda: self.selectFilter(LowPassFilter.MODE))
         
         self.radioButtons[LowPassFilter.MIN] = QRadioButton()
         self.radioButtons[LowPassFilter.MIN].setChecked(False)

@@ -1,12 +1,15 @@
 """ Bibliotecas externas. """
-import numpy
 from enum import Enum
+import numpy
 from PyQt5.QtGui import (QColor)
-import scipy.stats
 
 LowPassFilter = Enum('LowPassFilter', 'BOX MEDIAN MODE NEG MIN MAX')
 
 def applyFilter(image, maskSize, filterKey):
+    """ Aplica o filtro de acordo com a chave
+    passada por parâmetro.
+    """
+    
     filters = {
         LowPassFilter.BOX: box,
         LowPassFilter.MEDIAN: median,
@@ -42,7 +45,7 @@ def box(image, maskDim):
             green = []
             blue = []
             
-            for (index, maskRow) in enumerate(mask):
+            for maskRow in mask:
                 for (sr, sc) in maskRow:
                     # Tratamento de borda circular
                     x = (i + sr) % height
@@ -63,6 +66,7 @@ def box(image, maskDim):
 
     return newImage
 
+
 def median(image, maskDim):
     """ Aplica o filtro de mediana em uma imagem,
     de acordo com o tamanho da máscara passada por
@@ -74,7 +78,7 @@ def median(image, maskDim):
     
     # Máscara a ser usada no filtro
     center = maskDim // 2
-    mask = [[(i - center, j - center, 1) for j in range(maskDim)]
+    mask = [[(i - center, j - center) for j in range(maskDim)]
            for i in range(maskDim)]
     
     # Cria uma cópia da imagem original
@@ -86,22 +90,25 @@ def median(image, maskDim):
 
     for i in range(height):
         for j in range(width):
-            newColor = {'red': 0, 'green': 0, 'blue': 0}
+            red = []
+            green = []
+            blue = []
             
-            for row in mask:
-                for (sr, sc, weight) in row:
+            for maskRow in mask:
+                for (sr, sc) in maskRow:
                     # Tratamento de borda circular
                     x = (i + sr) % height
                     y = (j + sc) % width
 
                     pixelColor = image.pixelColor(x, y)
 
-                    newColor['red'] += pixelColor.red() * weight
-                    newColor['green'] += pixelColor.green() * weight
-                    newColor['blue'] +=  pixelColor.blue() * weight
+                    red.append(pixelColor.red())
+                    green.append(pixelColor.green())
+                    blue.append(pixelColor.blue())
 
-            newColor = {key: round(value / (maskDim * maskDim)) \
-                        for key, value in newColor.items()}
+            newColor = {'red': round(numpy.median(red)),
+                        'green': round(numpy.median(green)),
+                        'blue': round(numpy.median(blue))}
 
             newColor = QColor(newColor['red'], newColor['green'], newColor['blue'])
             newImage.setPixelColor(i, j, newColor)
