@@ -3,7 +3,7 @@ from enum import Enum
 import numpy
 from PyQt5.QtGui import (QColor)
 
-LowPassFilter = Enum('LowPassFilter', 'BOX MEDIAN MODE NEG MIN MAX')
+SpaceOps = Enum('SpaceOps', 'BOX MEDIAN MIN MAX')
 
 def applyFilter(image, maskSize, filterKey):
     """ Aplica o filtro de acordo com a chave
@@ -11,8 +11,8 @@ def applyFilter(image, maskSize, filterKey):
     """
     
     filters = {
-        LowPassFilter.BOX: box,
-        LowPassFilter.MEDIAN: median,
+        SpaceOps.BOX: box,
+        SpaceOps.MEDIAN: median,
     }
 
     return filters[filterKey](image, maskSize)

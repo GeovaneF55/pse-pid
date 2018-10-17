@@ -6,8 +6,9 @@ setup(
     version='1.0.0',
     packages=find_packages(),
     install_requires=[
-        'pyqt5 >= 5.11.3',
+        'matplotlib',
         'numpy',
-        'opencv-python'
+        'opencv-python',
+        'pyqt5 >= 5.11.3',
     ],
 )

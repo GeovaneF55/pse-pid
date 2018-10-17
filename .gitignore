@@ -113,4 +113,4 @@ dmypy.json
 
 # others
 .vscode/
-resources/histograms/
+resources/histograms/*
