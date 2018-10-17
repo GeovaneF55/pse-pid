@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (QAction,
                              QWidget)
 
 """ Bibliotecas locais. """
-from algorithm.filter import (low_pass)
+from algorithm.filter import (space_ops)
 from algorithm.interpolation import (interpolation)
 from gui.dialog_filter import (DialogFilter)
 from gui.dialog_histogram import (DialogHistogram)
@@ -21,7 +21,11 @@ from gui.dialog_interpolation import (DialogInterpolation)
 from gui.toolbar import (ToolBar)
 from util.resources import (ICONS)
 
-class MainWindow(QMainWindow):    
+class MainWindow(QMainWindow):
+    IMAGE_DIM = 256
+    WINDOW_WIDTH = 512
+    WINDOW_HEIGHT = 256
+    
     def __init__(self):
         super().__init__()
         
@@ -40,7 +44,7 @@ class MainWindow(QMainWindow):
         principal do programa.
         """
         
-        self.setFixedSize(512, 256)
+        self.setFixedSize(MainWindow.WINDOW_WIDTH, MainWindow.WINDOW_HEIGHT)
         self.center()
         self.setWindowTitle('PSE')
         self.setWindowIcon(QIcon(ICONS['pse']))
@@ -89,7 +93,8 @@ class MainWindow(QMainWindow):
         # Histograma
         histAct = QAction(QIcon(ICONS['histogram']), 'Histograma', self.toolbar)
         histAct.triggered.connect(lambda: DialogHistogram
-                                .getResults(self.image['original'].pixmap().toImage(), self))
+                                  .getResults(self.image['original'].pixmap().toImage(),
+                                              self))
         self.toolbar.addAction(histAct)
 
         # Resetar Imagem
@@ -114,11 +119,12 @@ class MainWindow(QMainWindow):
         (row, _) = data['mask'].split('x')
         row = int(row)
 
-        newImage = low_pass.applyFilter(self.image['processed'].pixmap().toImage(),
-                                        row, data['filter'])
+        newImage = space_ops.applyFilter(self.image['processed'].pixmap().toImage(),
+                                         row, data['filter'])
         
         self.image['processed'] \
-            .setPixmap(QPixmap.fromImage(newImage).scaled(256, 256))
+            .setPixmap(QPixmap.fromImage(newImage) \
+                       .scaled(MainWindow.IMAGE_DIM, MainWindow.IMAGE_DIM))
 
 
     def applyInterpolation(self):
@@ -151,7 +157,8 @@ class MainWindow(QMainWindow):
         self.image['processed'] = QLabel()
         self.image['processed'].setAlignment(Qt.AlignVCenter)
         
-        pixmap = QPixmap(imagePath).scaled(256, 256)
+        pixmap = QPixmap(imagePath) \
+            .scaled(MainWindow.IMAGE_DIM, MainWindow.IMAGE_DIM)
         
         self.image['original'].setPixmap(pixmap)
         self.image['processed'].setPixmap(pixmap)
@@ -161,10 +168,13 @@ class MainWindow(QMainWindow):
 
 
     def resetImage(self):
-        self.image['processed'].setPixmap(self.image['original'].pixmap())
+        if self.image['processed']:
+            self.image['processed'].setPixmap(self.image['original'].pixmap())
 
    
     def saveImage(self):
-        (imagePath, _) = QFileDialog.getSaveFileName(self, 'Salvar Imagem',
-                                                     filter='Images (*.png *.jpg)')
+        (imagePath, _) = QFileDialog \
+            .getSaveFileName(self, 'Salvar Imagem',
+                             filter='Images (*.png *.jpg)')
+        
         self.image['processed'].pixmap().save(imagePath)
