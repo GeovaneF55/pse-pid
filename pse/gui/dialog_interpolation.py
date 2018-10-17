@@ -2,6 +2,7 @@
 from PyQt5.QtCore import (Qt)
 from PyQt5.QtWidgets import (QDialog,
                              QDialogButtonBox,
+                             QDoubleSpinBox,
                              QComboBox,
                              QFormLayout)
 
@@ -15,7 +16,12 @@ class DialogInterpolation(QDialog):
     def initUI(self):
         layout = QFormLayout(self)
 
-	# Input Tipo de Interpolação
+        # Input Ampliação/Redução
+        self.scale = QDoubleSpinBox()
+        self.scale.setRange(-2, 2)
+        layout.addRow("Ampliação/Redução: ", self.scale)
+
+	    # Input Tipo de Interpolação
         self.type = QComboBox()
         self.type.addItems(["Vizinho Mais Próximo", "Bilinear", "Bicúbica"])
         self.type.currentIndexChanged.connect(self.selectionchange)
@@ -34,8 +40,12 @@ class DialogInterpolation(QDialog):
         pass
 
 
-    def getAxis(self):
+    def getTypeInt(self):
         return self.type.currentText()
+
+    
+    def getScale(self):
+        return self.scale.text()
 
 
     @staticmethod
@@ -43,5 +53,7 @@ class DialogInterpolation(QDialog):
         """ Método estático que cria o dialog e retorna (type_interpolation, aceito) """
         dialog = DialogInterpolation(parent)
         result = dialog.exec_()
-        typeInterpolation = dialog.getAxis()
-        return (typeInterpolation, result == QDialog.Accepted)
+        typeInt = dialog.getTypeInt()
+        scale = dialog.getScale()
+
+        return ({'type_inpertpolation':typeInt, 'ampliacao_reducao':scale}, result == QDialog.Accepted)

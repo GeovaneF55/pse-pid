@@ -1,11 +1,12 @@
-import numpy as np
+from PyQt5.QtGui import (QPixmap)
 
-def nearest_neighbour(image):
+def nearest_neighbour(image, scale):
 
-    channels_count = 4
+    pixmap = QPixmap(image.width() * scale, image.height() * scale)
 
-    s = image.bits().asstring(image.width() * image.height() * channels_count)
-    arr = np.fromstring(s, dtype=np.uint8).reshape((image.height(), image.width(), channels_count))
+    for i in range(height):
+        for j in range(width):
+            pass
 
     # Cria uma cópia da imagem original
     newImage = image.copy()
