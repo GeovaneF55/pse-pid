@@ -11,5 +11,5 @@ ICONS = {
     'histogram': PATH + 'images/histogram.png',
     'open': PATH + 'images/open.png',
     'save': PATH + 'images/save.png',
-    'reset': PATH + 'images/reset.png'
+    'undo': PATH + 'images/undo.png'
 }

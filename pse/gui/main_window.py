@@ -1,35 +1,35 @@
 """ Bibliotecas externas. """
-from PyQt5.QtCore import (Qt)
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import (QIcon,
                          QPixmap)
 from PyQt5.QtWidgets import (QAction,
                              qApp,
                              QDialog,
-                             QHBoxLayout,
                              QDesktopWidget,
                              QFileDialog,
                              QLabel,
-                             QMainWindow,
-                             QWidget)
+                             QMainWindow)
 
 """ Bibliotecas locais. """
-from algorithm.filter import (space_ops)
-from algorithm.interpolation import (interpolation)
-from gui.dialog_filter import (DialogFilter)
-from gui.dialog_histogram import (DialogHistogram)
-from gui.dialog_interpolation import (DialogInterpolation)
-from gui.toolbar import (ToolBar)
-from util.resources import (ICONS)
+from algorithm.filter import (low_pass,
+                              morph)
+from algorithm.interpolation import interpolation
+from gui.dialog_filter import DialogFilter
+from gui.dialog_histogram import DialogHistogram
+from gui.dialog_interpolation import DialogInterpolation
+from gui.main_widget import MainWidget
+from gui.toolbar import ToolBar
+from util.resources import ICONS
 
 class MainWindow(QMainWindow):
-    IMAGE_DIM = 256
-    WINDOW_WIDTH = 512
-    WINDOW_HEIGHT = 256
+    MIN_WIDTH = 512
+    MIN_HEIGHT = 256
+    
+    WIDTH = 1024
+    HEIGHT = 512
     
     def __init__(self):
         super().__init__()
-        
-        self.image = {'original': None, 'processed': None}
         
         exitAct = QAction(self)
         exitAct.triggered.connect(qApp.quit)
@@ -37,28 +37,26 @@ class MainWindow(QMainWindow):
         self.addAction(exitAct)
         
         self.initUI()
-
+        
         
     def initUI(self):
         """ Inicializa todos os widgets relacionados a janela
         principal do programa.
         """
+
+        self.centralWidget = MainWidget(self)
+        self.setCentralWidget(self.centralWidget)
         
-        self.setFixedSize(MainWindow.WINDOW_WIDTH, MainWindow.WINDOW_HEIGHT)
+        self.resize(MainWindow.WIDTH, MainWindow.HEIGHT)
+        self.setMinimumSize(MainWindow.MIN_WIDTH, MainWindow.MIN_HEIGHT)
         self.center()
         self.setWindowTitle('PSE')
         self.setWindowIcon(QIcon(ICONS['pse']))
         self.createToolBar()
 
-        self.layout = QHBoxLayout()
-        
-        centralWidget = QWidget()
-        centralWidget.setLayout(self.layout)
-        self.setCentralWidget(centralWidget)
-
         self.show()
-        
-        
+    
+
     def center(self):
         """ Centraliza a janela principal, em relação ao Desktop. """
         
@@ -92,15 +90,13 @@ class MainWindow(QMainWindow):
 
         # Histograma
         histAct = QAction(QIcon(ICONS['histogram']), 'Histograma', self.toolbar)
-        histAct.triggered.connect(lambda: DialogHistogram
-                                  .getResults(self.image['original'].pixmap().toImage(),
-                                              self))
+        histAct.triggered.connect(self.plotHistogram)
         self.toolbar.addAction(histAct)
 
-        # Resetar Imagem
-        resetAct = QAction(QIcon(ICONS['reset']), 'Resetar Imagem', self.toolbar)
-        resetAct.triggered.connect(self.resetImage)
-        self.toolbar.addAction(resetAct)
+        # Desfazer última ação
+        undoAct = QAction(QIcon(ICONS['undo']), 'Desfazer', self.toolbar)
+        undoAct.triggered.connect(lambda: self.centralWidget.undo())
+        self.toolbar.addAction(undoAct)
 
         # Salvar Imagem
         saveAct = QAction(QIcon(ICONS['save']), 'Salvar Imagem', self.toolbar)
@@ -113,19 +109,30 @@ class MainWindow(QMainWindow):
     def applyFilter(self):
         (data, ok) = DialogFilter.getResults(self)
 
-        if not ok or not self.image['processed']:
+        # Se opção foi cancelar ou se nenhuma imagem foi carregada
+        # ainda, retornar.
+        if not ok or not self.centralWidget.items:
             return
 
         (row, _) = data['mask'].split('x')
         row = int(row)
 
-        newImage = space_ops.applyFilter(self.image['processed'].pixmap().toImage(),
-                                         row, data['filter'])
+        filterFn = None
+        label = ''
         
-        self.image['processed'] \
-            .setPixmap(QPixmap.fromImage(newImage) \
-                       .scaled(MainWindow.IMAGE_DIM, MainWindow.IMAGE_DIM))
+        if data['filter'] in low_pass.Filter:
+            filterFn = low_pass.applyFilter
+            label = low_pass.FilterLabel[data['filter']]
+        elif data['filter'] in morph.Filter:
+            filterFn = morph.applyFilter
+            label = morph.FilterLabel[data['filter']]
 
+        lastItem = len(self.centralWidget.items) - 1
+        newImage = filterFn(self.centralWidget.items[lastItem]['pixmap'].toImage(),
+                            row, data['filter'])
+
+        self.centralWidget.insertProcessed(QPixmap.fromImage(newImage), label)
+        
 
     def applyInterpolation(self):
         (data, ok) = DialogInterpolation.getResults(self)
@@ -133,11 +140,18 @@ class MainWindow(QMainWindow):
         if ok == QDialog.Rejected:
             return None
 
-        newImage = interpolation.nearest_neighbour(self.image['processed'].pixmap().toImage())
+        lastItem = len(self.centralWidget.items) - 1
+        newImage = interpolation \
+            .nearest_neighbour(self.centralWidget.items[lastItem]['pixmap'].toImage(),
+                               2)
 
-        self.image['processed'] \
-            .setPixmap(QPixmap.fromImage(newImage).scaled(256, 256))
+    def plotHistogram(self):
+        lastItem = len(self.centralWidget.items) - 1
 
+        if lastItem >= 0:
+            DialogHistogram.getResults(self.centralWidget \
+                                       .items[lastItem]['pixmap'].toImage(),
+                                       self)
         
     def getImage(self):
         (imagePath, ok) = QFileDialog \
@@ -147,34 +161,15 @@ class MainWindow(QMainWindow):
         if not ok:
             return
 
-        if self.image['original']:
-            self.layout.removeWidget(self.image['original'])
-            self.layout.removeWidget(self.image['processed'])
-            
-        self.image['original'] = QLabel()
-        self.image['original'].setAlignment(Qt.AlignVCenter)
-        
-        self.image['processed'] = QLabel()
-        self.image['processed'].setAlignment(Qt.AlignVCenter)
-        
-        pixmap = QPixmap(imagePath) \
-            .scaled(MainWindow.IMAGE_DIM, MainWindow.IMAGE_DIM)
-        
-        self.image['original'].setPixmap(pixmap)
-        self.image['processed'].setPixmap(pixmap)
-        
-        self.layout.addWidget(self.image['original'])
-        self.layout.addWidget(self.image['processed'])
-
-
-    def resetImage(self):
-        if self.image['processed']:
-            self.image['processed'].setPixmap(self.image['original'].pixmap())
+        pixmap = QPixmap(imagePath)
+        self.centralWidget.insertOriginal(pixmap)
 
    
     def saveImage(self):
         (imagePath, _) = QFileDialog \
             .getSaveFileName(self, 'Salvar Imagem',
                              filter='Images (*.png *.jpg)')
-        
-        self.image['processed'].pixmap().save(imagePath)
+
+        lastItem = len(self.centralWidget.items) - 1
+        if lastItem >= 0:
+            self.centralWidget.items[lastItem]['pixmap'].save(imagePath)

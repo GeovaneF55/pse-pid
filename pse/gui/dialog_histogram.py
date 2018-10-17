@@ -3,8 +3,8 @@ import cv2
 from matplotlib import pyplot as plt
 import numpy as np
 import os
-from PyQt5.QtCore import (Qt)
-from PyQt5.QtGui import (QPixmap)
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QDialog,
                              QDialogButtonBox,
                              QFormLayout,
@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (QDialog,
                              QRadioButton)
 
 """ Biliotecas locais. """
-from util.resources import (HIST)
+from util.resources import HIST
                              
 class DialogHistogram(QDialog):
     def __init__(self, origImage, parent = None):

@@ -1,5 +1,5 @@
 """ Bibliotecas externas. """
-from PyQt5.QtCore import (Qt)
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QComboBox,
                              QDialogButtonBox,
                              QDialog,
@@ -11,13 +11,14 @@ from PyQt5.QtWidgets import (QComboBox,
 
 
 """ Biliotecas locais. """
-from algorithm.filter.space_ops import (SpaceOps)
+from algorithm.filter import (low_pass,
+                              morph)
 
 class DialogFilter(QDialog):
     def __init__(self, parent = None):
         super(DialogFilter, self).__init__(parent)
 
-        self.selectedKey = SpaceOps.BOX
+        self.selectedKey = low_pass.Filter.BOX
         self.selectedFilter = {'filter': self.selectedKey,
                                'mask': '3x3'}
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -31,14 +32,14 @@ class DialogFilter(QDialog):
 
         # Filtros.
         self.labels = {}
-        self.labels[SpaceOps.BOX] = QLabel('Box')
-        self.labels[SpaceOps.MEDIAN] = QLabel('Mediana')
-        self.labels[SpaceOps.MIN] = QLabel('Mínimo')
-        self.labels[SpaceOps.MAX] = QLabel('Máximo')
+        self.labels[low_pass.Filter.BOX] = QLabel('Box')
+        self.labels[low_pass.Filter.MEDIAN] = QLabel('Mediana')
+        self.labels[morph.Filter.MIN] = QLabel('Mínimo')
+        self.labels[morph.Filter.MAX] = QLabel('Máximo')
 
         labelsLayout = QVBoxLayout()
         for key, label in self.labels.items():
-            if key != SpaceOps.BOX:
+            if key != low_pass.Filter.BOX:
                 label.setEnabled(False)
                 
             labelsLayout.addWidget(label)
@@ -48,21 +49,21 @@ class DialogFilter(QDialog):
 
         # Máscaras.
         self.masks = {}
-        self.masks[SpaceOps.BOX] = QComboBox()
-        self.masks[SpaceOps.BOX].addItems(['3x3', '5x5', '7x7'])
+        self.masks[low_pass.Filter.BOX] = QComboBox()
+        self.masks[low_pass.Filter.BOX].addItems(['3x3', '5x5', '7x7'])
 
-        self.masks[SpaceOps.MEDIAN] = QComboBox()
-        self.masks[SpaceOps.MEDIAN].addItems(['3x3', '5x5', '7x7'])
+        self.masks[low_pass.Filter.MEDIAN] = QComboBox()
+        self.masks[low_pass.Filter.MEDIAN].addItems(['3x3', '5x5', '7x7'])
         
-        self.masks[SpaceOps.MIN] = QComboBox()
-        self.masks[SpaceOps.MIN].addItems(['3x3', '5x5', '7x7'])
+        self.masks[morph.Filter.MIN] = QComboBox()
+        self.masks[morph.Filter.MIN].addItems(['3x3', '5x5', '7x7'])
 
-        self.masks[SpaceOps.MAX] = QComboBox()
-        self.masks[SpaceOps.MAX].addItems(['3x3', '5x5', '7x7'])
+        self.masks[morph.Filter.MAX] = QComboBox()
+        self.masks[morph.Filter.MAX].addItems(['3x3', '5x5', '7x7'])
 
         masksLayout = QVBoxLayout()
         for key, mask in self.masks.items():
-            if key != SpaceOps.BOX:
+            if key != low_pass.Filter.BOX:
                 mask.setEnabled(False)
                 
             masksLayout.addWidget(mask)
@@ -72,25 +73,25 @@ class DialogFilter(QDialog):
 
         # Seleção do filtro.
         self.radioButtons = {}
-        self.radioButtons[SpaceOps.BOX] = QRadioButton()
-        self.radioButtons[SpaceOps.BOX].setChecked(True)
-        self.radioButtons[SpaceOps.BOX]. \
-            clicked.connect(lambda: self.selectFilter(SpaceOps.BOX))
+        self.radioButtons[low_pass.Filter.BOX] = QRadioButton()
+        self.radioButtons[low_pass.Filter.BOX].setChecked(True)
+        self.radioButtons[low_pass.Filter.BOX]. \
+            clicked.connect(lambda: self.selectFilter(low_pass.Filter.BOX))
 
-        self.radioButtons[SpaceOps.MEDIAN] = QRadioButton()
-        self.radioButtons[SpaceOps.MEDIAN].setChecked(False)
-        self.radioButtons[SpaceOps.MEDIAN]. \
-            clicked.connect(lambda: self.selectFilter(SpaceOps.MEDIAN))
+        self.radioButtons[low_pass.Filter.MEDIAN] = QRadioButton()
+        self.radioButtons[low_pass.Filter.MEDIAN].setChecked(False)
+        self.radioButtons[low_pass.Filter.MEDIAN]. \
+            clicked.connect(lambda: self.selectFilter(low_pass.Filter.MEDIAN))
         
-        self.radioButtons[SpaceOps.MIN] = QRadioButton()
-        self.radioButtons[SpaceOps.MIN].setChecked(False)
-        self.radioButtons[SpaceOps.MIN]. \
-            clicked.connect(lambda: self.selectFilter(SpaceOps.MIN))        
+        self.radioButtons[morph.Filter.MIN] = QRadioButton()
+        self.radioButtons[morph.Filter.MIN].setChecked(False)
+        self.radioButtons[morph.Filter.MIN]. \
+            clicked.connect(lambda: self.selectFilter(morph.Filter.MIN))        
         
-        self.radioButtons[SpaceOps.MAX]= QRadioButton()
-        self.radioButtons[SpaceOps.MAX].setChecked(False)
-        self.radioButtons[SpaceOps.MAX]. \
-            clicked.connect(lambda: self.selectFilter(SpaceOps.MAX))
+        self.radioButtons[morph.Filter.MAX]= QRadioButton()
+        self.radioButtons[morph.Filter.MAX].setChecked(False)
+        self.radioButtons[morph.Filter.MAX]. \
+            clicked.connect(lambda: self.selectFilter(morph.Filter.MAX))
         
         radioButtonsLayout = QVBoxLayout()
         for key, button in self.radioButtons.items():
@@ -129,6 +130,7 @@ class DialogFilter(QDialog):
 
         return self.accept()
     
+    
     def selectFilter(self, selectedKey):
         """ Seta as configurações do filtro selecionado."""
         
@@ -139,6 +141,7 @@ class DialogFilter(QDialog):
 
         self.selectedKey = selectedKey
 
+        
     @staticmethod
     def getResults(parent = None):
         """ Método estático que cria o dialog e retorna uma tupla contendo:
