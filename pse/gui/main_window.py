@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import (QAction,
 
 """ Bibliotecas locais. """
 from algorithm.filter import (low_pass)
+from algorithm.interpolation import (interpolation)
 from gui.dialog_interpolation import (DialogInterpolation)
 from gui.dialog_filter import (DialogFilter)
 from gui.dialog_histogram import (DialogHistogram)
@@ -125,7 +126,10 @@ class MainWindow(QMainWindow):
         if ok == QDialog.Rejected:
             return None
 
-        print(data)
+        newImage = interpolation.nearest_neighbour(self.image['processed'].pixmap().toImage())
+
+        self.image['processed'] \
+            .setPixmap(QPixmap.fromImage(newImage).scaled(256, 256))
 
         
     def getImage(self):
