@@ -34,6 +34,8 @@ class DialogFilter(QDialog):
         self.labels = {}
         self.labels[low_pass.Filter.BOX] = QLabel('Box')
         self.labels[low_pass.Filter.MEDIAN] = QLabel('Mediana')
+        self.labels[low_pass.Filter.MODE] = QLabel('Moda')
+        self.labels[low_pass.Filter.GAUSSIAN] = QLabel('Gaussiano')
         self.labels[morph.Filter.MIN] = QLabel('Mínimo')
         self.labels[morph.Filter.MAX] = QLabel('Máximo')
 
@@ -54,6 +56,12 @@ class DialogFilter(QDialog):
 
         self.masks[low_pass.Filter.MEDIAN] = QComboBox()
         self.masks[low_pass.Filter.MEDIAN].addItems(['3x3', '5x5', '7x7'])
+
+        self.masks[low_pass.Filter.MODE] = QComboBox()
+        self.masks[low_pass.Filter.MODE].addItems(['3x3', '5x5', '7x7'])
+
+        self.masks[low_pass.Filter.GAUSSIAN] = QComboBox()
+        self.masks[low_pass.Filter.GAUSSIAN].addItems(['3x3', '5x5', '7x7'])
         
         self.masks[morph.Filter.MIN] = QComboBox()
         self.masks[morph.Filter.MIN].addItems(['3x3', '5x5', '7x7'])
@@ -82,6 +90,16 @@ class DialogFilter(QDialog):
         self.radioButtons[low_pass.Filter.MEDIAN].setChecked(False)
         self.radioButtons[low_pass.Filter.MEDIAN]. \
             clicked.connect(lambda: self.selectFilter(low_pass.Filter.MEDIAN))
+
+        self.radioButtons[low_pass.Filter.MODE] = QRadioButton()
+        self.radioButtons[low_pass.Filter.MODE].setChecked(False)
+        self.radioButtons[low_pass.Filter.MODE]. \
+            clicked.connect(lambda: self.selectFilter(low_pass.Filter.MODE))
+
+        self.radioButtons[low_pass.Filter.GAUSSIAN] = QRadioButton()
+        self.radioButtons[low_pass.Filter.GAUSSIAN].setChecked(False)
+        self.radioButtons[low_pass.Filter.GAUSSIAN]. \
+            clicked.connect(lambda: self.selectFilter(low_pass.Filter.GAUSSIAN))
         
         self.radioButtons[morph.Filter.MIN] = QRadioButton()
         self.radioButtons[morph.Filter.MIN].setChecked(False)
