@@ -1,4 +1,8 @@
 """ Bibliotecas externas. """
+from PIL import (Image,
+                 ImageQt)
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QGridLayout,
                              QLabel,
                              QSizePolicy,
@@ -107,7 +111,8 @@ class MainWidget(QWidget):
         for i in range(self.grid['rows']):
             for j in range(self.grid['cols']):
                 text = items[item]['label']
-                pixmap = items[item]['pixmap']
+                imageQt = ImageQt.ImageQt(items[item]['image'])
+                pixmap = QPixmap.fromImage(imageQt)
 
                 self.addGridItem(text, pixmap, i, j)
 
@@ -126,14 +131,17 @@ class MainWidget(QWidget):
             self.fillGrid(self.items)
 
 
-    def insertOriginal(self, pixmap):
+    def insertOriginal(self, image):
         """ Insere a nova imagem em todas as posições do grid.
 
-        @param pixmap QPixmap
+        @param image PIL.Image
         """
 
-        pixmap = pixmap.scaled(MainWidget.IMAGE_DIM, MainWidget.IMAGE_DIM)
-        item = {'label': 'Original', 'pixmap': pixmap}
+        image = image.resize((MainWidget.IMAGE_DIM, MainWidget.IMAGE_DIM),
+                             Image.BICUBIC).convert('L')
+
+        dim = image.size
+        item = {'label': 'Original {}'.format(dim), 'image': image, 'dim': dim}
 
         self.items = [item]
         self.replicate = 0
@@ -141,18 +149,20 @@ class MainWidget(QWidget):
         self.fillGrid(self.items)
 
 
-    def insertProcessed(self, pixmap, label):
+    def insertProcessed(self, image, label):
         """ Insere uma imagem recém processada no grid.
         
-        @param pixmap QPixmap
+        @param image PIL.Image
         """
-
-        pixmap = pixmap.scaled(MainWidget.IMAGE_DIM, MainWidget.IMAGE_DIM)
-
+        
         # Variável usada para, caso grid não tenha sido completamente preenchido
         # ainda (contém cópias de alguma imagem), setar a nova imagem como a que
         # será replicada.
         self.replicate += 1
-        
-        self.items.append({'label': label, 'pixmap': pixmap})
+
+        dim = image.size
+        image = image.resize((MainWidget.IMAGE_DIM, MainWidget.IMAGE_DIM),
+                             Image.BICUBIC).convert('L')
+
+        self.items.append({'label': label, 'image': image, 'dim': dim})
         self.fillGrid(self.items)

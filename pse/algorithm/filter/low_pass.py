@@ -1,5 +1,7 @@
 """ Bibliotecas externas. """
 from enum import Enum
+from PIL import (ImageFilter,
+                 ImageQt)
 from PyQt5.QtGui import (QColor)
 
 Filter = Enum('Filter', 'BOX MEDIAN')
@@ -26,48 +28,13 @@ def boxFilter(image, maskDim):
     de acordo com o tamanho da máscara passada por
     parâmetro.
     
-    @param image deve ser um QImage.
+    @param image deve ser um PIL.Image.
     @param maskDim inteiro representando as dimensões da máscara.
     """
+
     
-    # Máscara a ser usada no filtro
-    center = maskDim // 2
-    mask = [[(i - center, j - center) for j in range(maskDim)]
-           for i in range(maskDim)]
-    
-    # Cria uma cópia da imagem original
-    newImage = image.copy()
-
-    # Dimensões da imagem
-    height = newImage.height()
-    width = newImage.width()
-
-    for i in range(height):
-        for j in range(width):
-            red = 0
-            green = 0
-            blue = 0
-            
-            for maskRow in mask:
-                for (sr, sc) in maskRow:
-                    # Tratamento de borda circular
-                    x = (i + sr) % height
-                    y = (j + sc) % width
-
-                    pixelColor = image.pixelColor(x, y)
-
-                    red += pixelColor.red()
-                    green += pixelColor.green()
-                    blue += pixelColor.blue()
-
-            newColor = {'red': round(red / (maskDim ** 2)),
-                        'green': round(green / (maskDim ** 2)),
-                        'blue': round(blue / (maskDim ** 2))}
-
-            newColor = QColor(newColor['red'], newColor['green'], newColor['blue'])
-            newImage.setPixelColor(i, j, newColor)
-
-    return newImage
+    radius = (maskDim - 1) // 2
+    return image.filter(ImageFilter.BoxBlur(radius))
 
 
 def medianFilter(image, maskDim):
@@ -75,48 +42,8 @@ def medianFilter(image, maskDim):
     de acordo com o tamanho da máscara passada por
     parâmetro.
 
-    @param image deve ser um QImage.
+    @param image deve ser um PIL.Image
     @param maskDim inteiro representando as dimensões da máscara.
     """
-    
-    # Máscara a ser usada no filtro
-    center = maskDim // 2
-    mask = [[(i - center, j - center) for j in range(maskDim)]
-           for i in range(maskDim)]
-    
-    # Cria uma cópia da imagem original
-    newImage = image.copy()
 
-    # Dimensões da imagem
-    height = newImage.height()
-    width = newImage.width()
-
-    # Posição da mediana
-    medianPos = (maskDim ** 2) // 2
-    
-    for i in range(height):
-        for j in range(width):
-            red = []
-            green = []
-            blue = []
-            
-            for maskRow in mask:
-                for (sr, sc) in maskRow:
-                    # Tratamento de borda circular
-                    x = (i + sr) % height
-                    y = (j + sc) % width
-
-                    pixelColor = image.pixelColor(x, y)
-
-                    red.append(pixelColor.red())
-                    green.append(pixelColor.green())
-                    blue.append(pixelColor.blue())
-
-            newColor = {'red': round(sorted(red)[medianPos]),
-                        'green': round(sorted(green)[medianPos]),
-                        'blue': round(sorted(blue)[medianPos])}
-            
-            newColor = QColor(newColor['red'], newColor['green'], newColor['blue'])
-            newImage.setPixelColor(i, j, newColor)
-
-    return newImage
+    return image.filter(ImageFilter.MedianFilter(maskDim))

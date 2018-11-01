@@ -1,17 +1,8 @@
-from PyQt5.QtGui import (QPixmap)
+from PIL import Image
 
-def nearest_neighbour(image, scale):
+def nearest_neighbor(image, dim, scale):
+    (width, height) = dim
+    width = round(width * scale)
+    height = round(height * scale)
 
-    width = image.width()
-    height = image.height()
-
-    pixmap = QPixmap( width * scale, height * scale)
-
-    for i in range(height):
-        for j in range(width):
-            pass
-
-    # Cria uma cópia da imagem original
-    newImage = image.copy()
-
-    return newImage
+    return image.resize((width, height), Image.NEAREST)

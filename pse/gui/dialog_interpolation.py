@@ -7,9 +7,14 @@ from PyQt5.QtWidgets import (QDialog,
                              QFormLayout)
 
 class DialogInterpolation(QDialog):
+    MIN_SCALE = 0.1
+    MAX_SCALE = 0.9
+    
     def __init__(self, parent = None):
         super(DialogInterpolation, self).__init__(parent)
-        #self.setAttribute(Qt.WA_DeleteOnClose)
+
+        self.data = {'type': 'Nearest', 'scale': DialogInterpolation.MIN_SCALE}
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.initUI()
 
 
@@ -17,15 +22,18 @@ class DialogInterpolation(QDialog):
         layout = QFormLayout(self)
 
         # Input Ampliação/Redução
-        self.scale = QDoubleSpinBox()
-        self.scale.setRange(-2, 2)
-        layout.addRow("Ampliação/Redução: ", self.scale)
+        self.scaleBox = QDoubleSpinBox()
+        self.scaleBox.setSingleStep(DialogInterpolation.MIN_SCALE)
+        self.scaleBox.setRange(DialogInterpolation.MIN_SCALE,
+                               DialogInterpolation.MAX_SCALE)
+        self.scaleBox.valueChanged.connect(self.updateScale)
+        layout.addRow("Ampliação/Redução: ", self.scaleBox)
 
 	    # Input Tipo de Interpolação
-        self.type = QComboBox()
-        self.type.addItems(["Vizinho Mais Próximo", "Bilinear", "Bicúbica"])
-        self.type.currentIndexChanged.connect(self.selectionchange)
-        layout.addRow("Tipo de Interpolação: ", self.type)
+        self.typeBox = QComboBox()
+        self.typeBox.addItems(["Vizinho Mais Próximo", "Bilinear", "Bicúbica"])
+        self.typeBox.currentIndexChanged.connect(self.updateType)
+        layout.addRow("Tipo de Interpolação: ", self.typeBox)
 
         # Botões de OK e Cancel
         buttons = QDialogButtonBox(
@@ -36,24 +44,18 @@ class DialogInterpolation(QDialog):
         layout.addRow(buttons)
 
 
-    def selectionchange(self, i):
-        pass
+    def updateScale(self):
+        self.data['scale'] = self.scaleBox.value()
 
-
-    def getTypeInt(self):
-        return self.type.currentText()
-
-    
-    def getScale(self):
-        return self.scale.text()
+        
+    def updateType(self):
+        self.data['type'] = self.typeBox.currentText()
 
 
     @staticmethod
     def getResults(parent = None):
         """ Método estático que cria o dialog e retorna (type_interpolation, aceito) """
         dialog = DialogInterpolation(parent)
-        result = dialog.exec_()
-        typeInt = dialog.getTypeInt()
-        scale = dialog.getScale()
+        result = dialog.exec_()        
 
-        return ({'type_inpertpolation':typeInt, 'ampliacao_reducao':scale}, result == QDialog.Accepted)
+        return (dialog.data, result)

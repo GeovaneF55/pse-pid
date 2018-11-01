@@ -10,5 +10,6 @@ setup(
         'numpy',
         'opencv-python',
         'pyqt5 >= 5.11.3',
+        'pillow',
     ],
 )

@@ -1,4 +1,6 @@
 """ Bibliotecas externas. """
+from PIL import (Image,
+                 ImageQt)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import (QIcon,
                          QPixmap)
@@ -131,31 +133,40 @@ class MainWindow(QMainWindow):
                 ' ({})'.format(data['mask'])
 
         lastItem = len(self.centralWidget.items) - 1
-        newImage = filterFn(self.centralWidget.items[lastItem]['pixmap'].toImage(),
+        newImage = filterFn(self.centralWidget.items[lastItem]['image'],
                             row, data['filter'])
 
-        self.centralWidget.insertProcessed(QPixmap.fromImage(newImage), label)
+        label += ' {}'.format(newImage.size)
+        self.centralWidget.insertProcessed(newImage, label)
         
 
     def applyInterpolation(self):
         (data, ok) = DialogInterpolation.getResults(self)
 
-        if ok == QDialog.Rejected:
-            return None
+        if not ok or not self.centralWidget.items:
+            return
 
         lastItem = len(self.centralWidget.items) - 1
+                                
         newImage = interpolation \
-            .nearest_neighbour(self.centralWidget.items[lastItem]['pixmap'].toImage(),
-                               2)
+            .nearest_neighbor(self.centralWidget.items[lastItem]['image'],
+                              self.centralWidget.items[lastItem]['dim'],
+                              data['scale'])
+
+        self.centralWidget.insertProcessed(
+            newImage,
+            '{} {}'.format(data['type'], newImage.size)
+        )
+        
 
     def plotHistogram(self):
         lastItem = len(self.centralWidget.items) - 1
 
         if lastItem >= 0:
-            DialogHistogram.getResults(self.centralWidget \
-                                       .items[lastItem]['pixmap'].toImage(),
+            DialogHistogram.getResults(self.centralWidget.items[lastItem]['image'],
                                        self)
-        
+
+            
     def getImage(self):
         (imagePath, ok) = QFileDialog \
             .getOpenFileName(self, 'Carregar Imagem',
@@ -164,8 +175,8 @@ class MainWindow(QMainWindow):
         if not ok:
             return
 
-        pixmap = QPixmap(imagePath)
-        self.centralWidget.insertOriginal(pixmap)
+        image = Image.open(imagePath)
+        self.centralWidget.insertOriginal(image)
 
    
     def saveImage(self):
