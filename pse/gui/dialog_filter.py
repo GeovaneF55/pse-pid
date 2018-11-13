@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QComboBox,
                              QDialogButtonBox,
                              QDialog,
+                             QDoubleSpinBox,
                              QHBoxLayout,
                              QLabel,
                              QRadioButton,
@@ -20,7 +21,7 @@ class DialogFilter(QDialog):
 
         self.selectedKey = low_pass.Filter.BOX
         self.selectedFilter = {'filter': self.selectedKey,
-                               'mask': '3x3'}
+                               'opt': '3x3'}
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.initUI()
 
@@ -34,10 +35,11 @@ class DialogFilter(QDialog):
         self.labels = {}
         self.labels[low_pass.Filter.BOX] = QLabel('Box')
         self.labels[low_pass.Filter.MEDIAN] = QLabel('Mediana')
-        self.labels[low_pass.Filter.MODE] = QLabel('Moda')
         self.labels[low_pass.Filter.GAUSSIAN] = QLabel('Gaussiano')
-        self.labels[morph.Filter.MIN] = QLabel('Mínimo')
-        self.labels[morph.Filter.MAX] = QLabel('Máximo')
+        self.labels[morph.Filter.DILATION] = QLabel('Dilatação')
+        self.labels[morph.Filter.EROSION] = QLabel('Erosão')
+        self.labels[morph.Filter.OPENING] = QLabel('Abertura')
+        self.labels[morph.Filter.CLOSING] = QLabel('Fechamento')
 
         labelsLayout = QVBoxLayout()
         for key, label in self.labels.items():
@@ -50,34 +52,38 @@ class DialogFilter(QDialog):
         labelsWidget.setLayout(labelsLayout)
 
         # Máscaras.
-        self.masks = {}
-        self.masks[low_pass.Filter.BOX] = QComboBox()
-        self.masks[low_pass.Filter.BOX].addItems(['3x3', '5x5', '7x7'])
+        self.opts = {}
+        self.opts[low_pass.Filter.BOX] = QComboBox()
+        self.opts[low_pass.Filter.BOX].addItems(['3x3', '5x5', '7x7'])
 
-        self.masks[low_pass.Filter.MEDIAN] = QComboBox()
-        self.masks[low_pass.Filter.MEDIAN].addItems(['3x3', '5x5', '7x7'])
+        self.opts[low_pass.Filter.MEDIAN] = QComboBox()
+        self.opts[low_pass.Filter.MEDIAN].addItems(['3x3', '5x5', '7x7'])
 
-        self.masks[low_pass.Filter.MODE] = QComboBox()
-        self.masks[low_pass.Filter.MODE].addItems(['3x3', '5x5', '7x7'])
-
-        self.masks[low_pass.Filter.GAUSSIAN] = QComboBox()
-        self.masks[low_pass.Filter.GAUSSIAN].addItems(['3x3', '5x5', '7x7'])
+        self.opts[low_pass.Filter.GAUSSIAN] = QDoubleSpinBox()
+        self.opts[low_pass.Filter.GAUSSIAN].setSingleStep(0.5)
+        self.opts[low_pass.Filter.GAUSSIAN].setRange(1, 21)
         
-        self.masks[morph.Filter.MIN] = QComboBox()
-        self.masks[morph.Filter.MIN].addItems(['3x3', '5x5', '7x7'])
+        self.opts[morph.Filter.DILATION] = QComboBox()
+        self.opts[morph.Filter.DILATION].addItems(['3x3', '5x5', '7x7'])
 
-        self.masks[morph.Filter.MAX] = QComboBox()
-        self.masks[morph.Filter.MAX].addItems(['3x3', '5x5', '7x7'])
+        self.opts[morph.Filter.EROSION] = QComboBox()
+        self.opts[morph.Filter.EROSION].addItems(['3x3', '5x5', '7x7'])
 
-        masksLayout = QVBoxLayout()
-        for key, mask in self.masks.items():
-            if key != low_pass.Filter.BOX:
-                mask.setEnabled(False)
+        self.opts[morph.Filter.OPENING] = QComboBox()
+        self.opts[morph.Filter.OPENING].addItems(['3x3', '5x5', '7x7'])
+
+        self.opts[morph.Filter.CLOSING] = QComboBox()
+        self.opts[morph.Filter.CLOSING].addItems(['3x3', '5x5', '7x7'])
                 
-            masksLayout.addWidget(mask)
+        optsLayout = QVBoxLayout()
+        for key, opt in self.opts.items():
+            if key != low_pass.Filter.BOX:
+                opt.setEnabled(False)
+                
+            optsLayout.addWidget(opt)
 
-        masksWidget = QWidget()
-        masksWidget.setLayout(masksLayout)
+        optsWidget = QWidget()
+        optsWidget.setLayout(optsLayout)
 
         # Seleção do filtro.
         self.radioButtons = {}
@@ -91,25 +97,30 @@ class DialogFilter(QDialog):
         self.radioButtons[low_pass.Filter.MEDIAN]. \
             clicked.connect(lambda: self.selectFilter(low_pass.Filter.MEDIAN))
 
-        self.radioButtons[low_pass.Filter.MODE] = QRadioButton()
-        self.radioButtons[low_pass.Filter.MODE].setChecked(False)
-        self.radioButtons[low_pass.Filter.MODE]. \
-            clicked.connect(lambda: self.selectFilter(low_pass.Filter.MODE))
-
         self.radioButtons[low_pass.Filter.GAUSSIAN] = QRadioButton()
         self.radioButtons[low_pass.Filter.GAUSSIAN].setChecked(False)
         self.radioButtons[low_pass.Filter.GAUSSIAN]. \
             clicked.connect(lambda: self.selectFilter(low_pass.Filter.GAUSSIAN))
         
-        self.radioButtons[morph.Filter.MIN] = QRadioButton()
-        self.radioButtons[morph.Filter.MIN].setChecked(False)
-        self.radioButtons[morph.Filter.MIN]. \
-            clicked.connect(lambda: self.selectFilter(morph.Filter.MIN))        
+        self.radioButtons[morph.Filter.DILATION]= QRadioButton()
+        self.radioButtons[morph.Filter.DILATION].setChecked(False)
+        self.radioButtons[morph.Filter.DILATION]. \
+            clicked.connect(lambda: self.selectFilter(morph.Filter.DILATION))
         
-        self.radioButtons[morph.Filter.MAX]= QRadioButton()
-        self.radioButtons[morph.Filter.MAX].setChecked(False)
-        self.radioButtons[morph.Filter.MAX]. \
-            clicked.connect(lambda: self.selectFilter(morph.Filter.MAX))
+        self.radioButtons[morph.Filter.EROSION] = QRadioButton()
+        self.radioButtons[morph.Filter.EROSION].setChecked(False)
+        self.radioButtons[morph.Filter.EROSION]. \
+            clicked.connect(lambda: self.selectFilter(morph.Filter.EROSION))
+
+        self.radioButtons[morph.Filter.OPENING]= QRadioButton()
+        self.radioButtons[morph.Filter.OPENING].setChecked(False)
+        self.radioButtons[morph.Filter.OPENING]. \
+            clicked.connect(lambda: self.selectFilter(morph.Filter.OPENING))
+        
+        self.radioButtons[morph.Filter.CLOSING] = QRadioButton()
+        self.radioButtons[morph.Filter.CLOSING].setChecked(False)
+        self.radioButtons[morph.Filter.CLOSING]. \
+            clicked.connect(lambda: self.selectFilter(morph.Filter.CLOSING))
         
         radioButtonsLayout = QVBoxLayout()
         for key, button in self.radioButtons.items():
@@ -121,7 +132,7 @@ class DialogFilter(QDialog):
         # Layout.
         sublayout = QHBoxLayout()
         sublayout.addWidget(labelsWidget)
-        sublayout.addWidget(masksWidget)
+        sublayout.addWidget(optsWidget)
         sublayout.addWidget(radioButtonsWidget)
 
         # Botões de OK e Cancel.
@@ -143,8 +154,15 @@ class DialogFilter(QDialog):
 
 
     def getFilter(self):
+        opt = ''
+        
+        if self.selectedKey == low_pass.Filter.GAUSSIAN:
+            opt =  self.opts[self.selectedKey].value()
+        else:
+            opt =  self.opts[self.selectedKey].currentText()
+            
         self.selectedFilter = {'filter': self.selectedKey,
-                               'mask': self.masks[self.selectedKey].currentText()}
+                               'opt': opt}
 
         return self.accept()
     
@@ -155,7 +173,7 @@ class DialogFilter(QDialog):
         for key, _ in self.radioButtons.items():
             selected = key == selectedKey
             self.labels[key].setEnabled(selected)
-            self.masks[key].setEnabled(selected)
+            self.opts[key].setEnabled(selected)
 
         self.selectedKey = selectedKey
 

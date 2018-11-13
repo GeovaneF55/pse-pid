@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'matplotlib',
         'numpy',
+        'scipy',
         'opencv-python',
         'pyqt5 >= 5.11.3',
         'pillow',

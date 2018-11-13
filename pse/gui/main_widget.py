@@ -137,6 +137,7 @@ class MainWidget(QWidget):
         @param image PIL.Image
         """
 
+        print(image.mode)
         image = image.resize((MainWidget.IMAGE_DIM, MainWidget.IMAGE_DIM),
                              Image.BICUBIC).convert('L')
 

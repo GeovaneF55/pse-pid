@@ -1,4 +1,5 @@
 """ Bibliotecas externas. """
+import numpy
 from PIL import (Image,
                  ImageQt)
 from PyQt5.QtCore import Qt
@@ -116,25 +117,25 @@ class MainWindow(QMainWindow):
         if not ok or not self.centralWidget.items:
             return
 
-        (row, _) = data['mask'].split('x')
-        row = int(row)
-
+        row = data['opt']
         filterFn = None
         label = ''
         
         if data['filter'] in low_pass.Filter:
             filterFn = low_pass.applyFilter
             label = low_pass.FilterLabel[data['filter']] + \
-                ' ({})'.format(data['mask'])
+                ' ({})'.format(data['opt'])
             
         elif data['filter'] in morph.Filter:
             filterFn = morph.applyFilter
             label = morph.FilterLabel[data['filter']] + \
-                ' ({})'.format(data['mask'])
+                ' ({})'.format(data['opt'])
 
         lastItem = len(self.centralWidget.items) - 1
-        newImage = filterFn(self.centralWidget.items[lastItem]['image'],
-                            row, data['filter'])
+        imageMatrix = numpy.array(self.centralWidget.items[lastItem]['image'])
+        newImage = Image.fromarray(
+            filterFn(imageMatrix, row, data['filter'])
+        )
 
         label += ' {}'.format(newImage.size)
         self.centralWidget.insertProcessed(newImage, label)
@@ -170,7 +171,7 @@ class MainWindow(QMainWindow):
     def getImage(self):
         (imagePath, ok) = QFileDialog \
             .getOpenFileName(self, 'Carregar Imagem',
-                             filter='Images (*.png *.jpg)')
+                             filter='Images (*.png *.jpg *.jpeg)')
 
         if not ok:
             return
@@ -182,7 +183,7 @@ class MainWindow(QMainWindow):
     def saveImage(self):
         (imagePath, _) = QFileDialog \
             .getSaveFileName(self, 'Salvar Imagem',
-                             filter='Images (*.png *.jpg)')
+                             filter='Images (*.png *.jpg *.jpeg)')
 
         lastItem = len(self.centralWidget.items) - 1
         if lastItem >= 0:
