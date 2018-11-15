@@ -3,7 +3,6 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QComboBox,
                              QDialogButtonBox,
                              QDialog,
-                             QDoubleSpinBox,
                              QHBoxLayout,
                              QLabel,
                              QRadioButton,
@@ -14,6 +13,7 @@ from PyQt5.QtWidgets import (QComboBox,
 """ Biliotecas locais. """
 from algorithm.filter import (low_pass,
                               morph)
+from gui.spinbox import DoubleTextSpinBox
 
 class DialogFilter(QDialog):
     def __init__(self, parent = None):
@@ -59,9 +59,9 @@ class DialogFilter(QDialog):
         self.opts[low_pass.Filter.MEDIAN] = QComboBox()
         self.opts[low_pass.Filter.MEDIAN].addItems(['3x3', '5x5', '7x7'])
 
-        self.opts[low_pass.Filter.GAUSSIAN] = QDoubleSpinBox()
+        self.opts[low_pass.Filter.GAUSSIAN] = DoubleTextSpinBox()
         self.opts[low_pass.Filter.GAUSSIAN].setSingleStep(0.5)
-        self.opts[low_pass.Filter.GAUSSIAN].setRange(1, 21)
+        self.opts[low_pass.Filter.GAUSSIAN].setRange(1, 11)
         
         self.opts[morph.Filter.DILATION] = QComboBox()
         self.opts[morph.Filter.DILATION].addItems(['3x3', '5x5', '7x7'])
@@ -123,6 +123,7 @@ class DialogFilter(QDialog):
             clicked.connect(lambda: self.selectFilter(morph.Filter.CLOSING))
         
         radioButtonsLayout = QVBoxLayout()
+        radioButtonsLayout.setContentsMargins(0, 0, 0, 0)
         for key, button in self.radioButtons.items():
             radioButtonsLayout.addWidget(button)
             
@@ -154,15 +155,8 @@ class DialogFilter(QDialog):
 
 
     def getFilter(self):
-        opt = ''
-        
-        if self.selectedKey == low_pass.Filter.GAUSSIAN:
-            opt =  self.opts[self.selectedKey].value()
-        else:
-            opt =  self.opts[self.selectedKey].currentText()
-            
         self.selectedFilter = {'filter': self.selectedKey,
-                               'opt': opt}
+                               'opt': self.opts[self.selectedKey].currentText()}
 
         return self.accept()
     

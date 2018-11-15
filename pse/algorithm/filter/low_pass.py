@@ -65,4 +65,4 @@ def gaussianFilter(image, sigma):
     @return matriz com novos valores após aplicação do filtro.
     """
 
-    return filters.gaussian_filter(image, sigma)
+    return filters.gaussian_filter(image, float(sigma))
