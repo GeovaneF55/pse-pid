@@ -18,7 +18,9 @@ from algorithm.filter import (low_pass,
                               high_pass,
                               morph)
 from algorithm.interpolation import interpolation
-from gui.dialog_filter import DialogFilter
+from gui.dialog_high_pass import DialogHighPass
+from gui.dialog_low_pass import DialogLowPass
+from gui.dialog_morph import DialogMorph
 from gui.dialog_histogram import DialogHistogram
 from gui.dialog_interpolation import DialogInterpolation
 from gui.main_widget import MainWidget
@@ -81,10 +83,21 @@ class MainWindow(QMainWindow):
         openAct.setShortcut('Ctrl+N')
         self.toolbar.addAction(openAct)
         
-        # Filtros
-        filtersAct = QAction(QIcon(ICONS['filters']), 'Filtros', self.toolbar)
-        filtersAct.triggered.connect(self.applyFilter)
-        self.toolbar.addAction(filtersAct)
+        # Filtros (F)
+        # F: Passa-Alta
+        highpassAct = QAction(QIcon(ICONS['high_pass']), 'Passa-Alta', self.toolbar)
+        highpassAct.triggered.connect(self.applyHighPass)
+        self.toolbar.addAction(highpassAct)
+
+        # F: Passa-Baixa
+        lowpassAct = QAction(QIcon(ICONS['low_pass']), 'Passa-Baixa', self.toolbar)
+        lowpassAct.triggered.connect(self.applyLowPass)
+        self.toolbar.addAction(lowpassAct)
+
+        # F: Morfológico
+        morphAct = QAction(QIcon(ICONS['morph']), 'Morfológico', self.toolbar)
+        morphAct.triggered.connect(self.applyMorph)
+        self.toolbar.addAction(morphAct)
 
         # Interpolação
         interpAct = QAction(QIcon(ICONS['interpolation']), 'Interpolação',
@@ -110,8 +123,7 @@ class MainWindow(QMainWindow):
         self.addToolBar(self.toolbar)
 
 
-    def applyFilter(self):
-        (data, ok) = DialogFilter.getResults(self)
+    def applyFilter(self, data, ok):
 
         # Se opção foi cancelar ou se nenhuma imagem foi carregada
         # ainda, retornar.
@@ -145,7 +157,21 @@ class MainWindow(QMainWindow):
 
         label += ' {}'.format(newImage.size)
         self.centralWidget.insertProcessed(newImage, label)
+
+    def applyHighPass(self):
+        (data, ok) = DialogHighPass.getResults(self)
+
+        self.applyFilter(data, ok)
+
+    def applyLowPass(self):
+        (data, ok) = DialogLowPass.getResults(self)
         
+        self.applyFilter(data, ok)
+
+    def applyMorph(self):
+        (data, ok) = DialogMorph.getResults(self)
+
+        self.applyFilter(data, ok)
 
     def applyInterpolation(self):
         (data, ok) = DialogInterpolation.getResults(self)

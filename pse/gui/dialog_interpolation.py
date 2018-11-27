@@ -19,6 +19,9 @@ class DialogInterpolation(QDialog):
 
 
     def initUI(self):
+
+        self.setWindowTitle('Interpolações')
+
         layout = QFormLayout(self)
 
         # Input Ampliação/Redução
