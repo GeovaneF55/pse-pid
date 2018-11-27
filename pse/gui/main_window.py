@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import (QAction,
 
 """ Bibliotecas locais. """
 from algorithm.filter import (low_pass,
+                              high_pass,
                               morph)
 from algorithm.interpolation import interpolation
 from gui.dialog_filter import DialogFilter
@@ -124,6 +125,11 @@ class MainWindow(QMainWindow):
         if data['filter'] in low_pass.Filter:
             filterFn = low_pass.applyFilter
             label = low_pass.FilterLabel[data['filter']] + \
+                ' ({})'.format(data['opt'])
+
+        elif data['filter'] in high_pass.Filter:
+            filterFn = high_pass.applyFilter
+            label = high_pass.FilterLabel[data['filter']] + \
                 ' ({})'.format(data['opt'])
             
         elif data['filter'] in morph.Filter:
