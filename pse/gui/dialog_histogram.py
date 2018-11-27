@@ -16,11 +16,14 @@ from PyQt5.QtWidgets import (QDialog,
 from util.resources import HIST
                              
 class DialogHistogram(QDialog):
-    def __init__(self, origImage, parent = None):
+    def __init__(self, origImage, procImage, parent = None):
         super(DialogHistogram, self).__init__(parent)
         
         # Salvar imagem temporariamente
         origImage.save(HIST + 'orig_tmp.jpg')
+
+        # Salvar última imagem processada temporariamente
+        procImage.save(HIST + 'proc_tmp.jpg')
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.initUI()

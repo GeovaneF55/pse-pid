@@ -164,7 +164,8 @@ class MainWindow(QMainWindow):
         lastItem = len(self.centralWidget.items) - 1
 
         if lastItem >= 0:
-            DialogHistogram.getResults(self.centralWidget.items[lastItem]['image'],
+            DialogHistogram.getResults(self.centralWidget.items[0]['image'],
+                                       self.centralWidget.items[lastItem]['image'],
                                        self)
 
             
