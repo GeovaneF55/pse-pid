@@ -39,6 +39,7 @@ class DialogMorph(QDialog):
         self.labels[morph.Filter.CLOSING] = QLabel('Fechamento')
 
         labelsLayout = QVBoxLayout()
+        labelsLayout.setContentsMargins(0, 0, 0, 0)
         for key, label in self.labels.items():
             if key != morph.Filter.DILATION:
                 label.setEnabled(False)
@@ -65,6 +66,7 @@ class DialogMorph(QDialog):
         self.opts[morph.Filter.CLOSING].addItems(['3x3', '5x5', '7x7'])
                 
         optsLayout = QVBoxLayout()
+        optsLayout.setContentsMargins(0, 0, 0, 0)
         for key, opt in self.opts.items():
             if key != morph.Filter.DILATION:
                 opt.setEnabled(False)
@@ -78,7 +80,7 @@ class DialogMorph(QDialog):
         self.radioButtons = {}
         # S: Morfológicos
         self.radioButtons[morph.Filter.DILATION]= QRadioButton()
-        self.radioButtons[morph.Filter.DILATION].setChecked(False)
+        self.radioButtons[morph.Filter.DILATION].setChecked(True)
         self.radioButtons[morph.Filter.DILATION]. \
             clicked.connect(lambda: self.selectFilter(morph.Filter.DILATION))
         
@@ -130,8 +132,12 @@ class DialogMorph(QDialog):
 
 
     def getFilter(self):
+        opt = None
+        if self.selectedKey in self.opts:
+            opt = self.opts[self.selectedKey].currentText()
+            
         self.selectedFilter = {'filter': self.selectedKey,
-                               'opt': self.opts[self.selectedKey].currentText()}
+                               'opt': opt}
 
         return self.accept()
     

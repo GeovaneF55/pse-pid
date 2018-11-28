@@ -38,6 +38,7 @@ class DialogLowPass(QDialog):
         self.labels[low_pass.Filter.GAUSSIAN] = QLabel('Gaussiano')
 
         labelsLayout = QVBoxLayout()
+        labelsLayout.setContentsMargins(0, 0, 0, 0)
         for key, label in self.labels.items():
             if key != low_pass.Filter.BOX:
                 label.setEnabled(False)
@@ -61,6 +62,7 @@ class DialogLowPass(QDialog):
         self.opts[low_pass.Filter.GAUSSIAN].setRange(1, 11)
                 
         optsLayout = QVBoxLayout()
+        optsLayout.setContentsMargins(0, 0, 0, 0)
         for key, opt in self.opts.items():
             if key != low_pass.Filter.BOX:
                 opt.setEnabled(False)
@@ -121,9 +123,13 @@ class DialogLowPass(QDialog):
 
 
     def getFilter(self):
+        opt = None
+        if self.selectedKey in self.opts:
+            opt = self.opts[self.selectedKey].currentText()
+            
         self.selectedFilter = {'filter': self.selectedKey,
-                               'opt': self.opts[self.selectedKey].currentText()}
-
+                               'opt': opt}
+        
         return self.accept()
     
     

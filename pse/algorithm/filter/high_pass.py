@@ -1,27 +1,87 @@
 """ Bibliotecas externas. """
 from enum import Enum
-from scipy.ndimage import filters
+from skimage.color.adapt_rgb import (adapt_rgb,
+                                     each_channel)
+from skimage import filters
 
-Filter = Enum('Filter', 'GAUSSIAN_LAPLACE LAPLACE PREWITT SOBEL')
+Filter = Enum('Filter', 'GAUSSIAN_LAPLACE LAPLACE PREWITT SOBEL ROBERTS')
 FilterLabel = {
-
-    Filter.GAUSSIAN_LAPLACE: 'Filtro Gaussiano-Laplaciano',
-    Filter.LAPLACE: 'Filtro de Laplace',
-    Filter.PREWITT: 'Filtro Prewitt',
-    Filter.SOBEL: 'Filtro de Sobel',
+    Filter.GAUSSIAN_LAPLACE: 'Laplaciano do Gaussiano',
+    Filter.LAPLACE: 'Laplace',
+    Filter.PREWITT: 'Prewitt',
+    Filter.SOBEL: 'Sobel',
+    Filter.ROBERTS: 'Roberts'
 }
 
-Border = Enum('Border', 'REFLECT NEAREST WRAP')
-BorderLabel = {
-    Border.REFLECT: 'Refletir',
-    Border.NEAREST: 'Mais próximo',
-    Border.WRAP: 'Circular'
-}
-BorderMap = {
-    BorderLabel[Border.REFLECT]: 'reflect',
-    BorderLabel[Border.NEAREST]: 'nearest',
-    BorderLabel[Border.WRAP]: 'wrap'
-}
+@adapt_rgb(each_channel)
+def sobel_rgb(image):
+    """ Aplica o filtro Sobel, utilizando o decorador
+    @adapt_rgb para que o filtro seja aplicado em todos
+    os canais RGB da imagem.
+
+    @param image numpy.ndarray.
+
+    @return result numpy.ndarray.
+    """
+
+    return filters.sobel(image)
+
+
+@adapt_rgb(each_channel)
+def gaussian_rgb(image, sigma):
+    """ Aplica o filtro Gaussiano, utilizando o decorador
+    @adapt_rgb para que o filtro seja aplicado em todos
+    os canais RGB da imagem.
+
+    @param image numpy.ndarray.
+    @param sigma
+
+    @return result numpy.ndarray.
+    """
+
+    return filters.gaussian(image, sigma)
+
+
+@adapt_rgb(each_channel)
+def laplace_rgb(image):
+    """ Aplica o filtro Laplaciano, utilizando o decorador
+    @adapt_rgb para que o filtro seja aplicado em todos
+    os canais RGB da imagem.
+
+    @param image numpy.ndarray.
+
+    @return result numpy.ndarray.
+    """
+
+    return filters.laplace(image)
+
+@adapt_rgb(each_channel)
+def prewitt_rgb(image):
+    """ Aplica o filtro Prewitt, utilizando o decorador
+    @adapt_rgb para que o filtro seja aplicado em todos
+    os canais RGB da imagem.
+
+    @param image numpy.ndarray.
+
+    @return result numpy.ndarray.
+    """
+
+    return filters.prewitt(image)
+
+
+@adapt_rgb(each_channel)
+def roberts_rgb(image):
+    """ Aplica o filtro Roberts, utilizando o decorador
+    @adapt_rgb para que o filtro seja aplicado em todos
+    os canais RGB da imagem.
+
+    @param image numpy.ndarray.
+
+    @return result numpy.ndarray.
+    """
+
+    return filters.roberts(image)
+
 
 def applyFilter(image, param, filterKey):
     """ Aplica o filtro de acordo com a chave
@@ -33,9 +93,13 @@ def applyFilter(image, param, filterKey):
         Filter.LAPLACE: laplaceFilter,
         Filter.PREWITT: prewittFilter,
         Filter.SOBEL: sobelFilter,
+        Filter.ROBERTS: robertsFilter
     }
 
-    return filters[filterKey](image, param)
+    if filterKey == Filter.GAUSSIAN_LAPLACE:
+        return filters[filterKey](image, param)
+    else:
+        return filters[filterKey](image)
 
 
 def gaussianLaplaceFilter(image, sigma):
@@ -48,11 +112,12 @@ def gaussianLaplaceFilter(image, sigma):
 
     @return matriz com novos valores após aplicação do filtro.
     """
-    
-    return filters.gaussian_laplace(image, float(sigma))
+
+    gaussian = gaussian_rgb(image, float(sigma))
+    return laplace_rgb(gaussian) * 255
 
 
-def laplaceFilter(image, border):
+def laplaceFilter(image):
     """ Aplica o filtro de laplace em uma imagem.
 
     @param image deve ser uma matriz (numpy)
@@ -60,12 +125,10 @@ def laplaceFilter(image, border):
     @return matriz com novos valores após aplicação do filtro.
     """
     
-    border = BorderMap[border]
-
-    return filters.laplace(image, mode=border)
+    return laplace_rgb(image) * 255
 
 
-def prewittFilter(image, border):
+def prewittFilter(image):
     """ Aplica o filtro prewitt em uma imagem.
     
     @param image deve ser uma matriz (numpy)
@@ -73,12 +136,10 @@ def prewittFilter(image, border):
     @return matriz com novos valores após aplicação do filtro.
     """
 
-    border = BorderMap[border]
-
-    return filters.prewitt(image, mode=border)
+    return prewitt_rgb(image) * 255
 
 
-def sobelFilter(image, border):
+def sobelFilter(image):
     """ Aplica o filtro sobel em uma imagem.
     
     @param image deve ser uma matriz (numpy)
@@ -86,6 +147,16 @@ def sobelFilter(image, border):
     @return matriz com novos valores após aplicação do filtro.
     """
     
-    border = BorderMap[border]
 
-    return filters.sobel(image, mode=border)
+    return sobel_rgb(image) * 255
+
+def robertsFilter(image):
+    """ Aplica o filtro de Roberts em uma imagem.
+    
+    @param image deve ser uma matriz (numpy)
+
+    @return matriz com novos valores após aplicação do filtro.
+    """
+    
+
+    return roberts_rgb(image) * 255

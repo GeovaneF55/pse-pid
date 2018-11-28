@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import (QComboBox,
                              QHBoxLayout,
                              QLabel,
                              QRadioButton,
+                             QSizePolicy,
+                             QSpacerItem,
                              QVBoxLayout,
                              QWidget)
 
@@ -32,11 +34,15 @@ class DialogHighPass(QDialog):
 
         # Filtros (F).
         self.labels = {}
-        self.labels[high_pass.Filter.GAUSSIAN_LAPLACE] = QLabel('Gaussiano Laplaciano')
+        self.labels[high_pass.Filter.GAUSSIAN_LAPLACE] = \
+            QLabel('Laplaciano do Gaussiano')
         self.labels[high_pass.Filter.LAPLACE] = QLabel('Laplaciano')
         self.labels[high_pass.Filter.PREWITT] = QLabel('Prewitt')
         self.labels[high_pass.Filter.SOBEL] = QLabel('Sobel')
+        self.labels[high_pass.Filter.ROBERTS] = QLabel('Roberts')
+        
         labelsLayout = QVBoxLayout()
+        labelsLayout.setContentsMargins(0, 0, 0, 0)
         for key, label in self.labels.items():
             if key != high_pass.Filter.GAUSSIAN_LAPLACE:
                 label.setEnabled(False)
@@ -53,24 +59,20 @@ class DialogHighPass(QDialog):
         self.opts[high_pass.Filter.GAUSSIAN_LAPLACE] = DoubleTextSpinBox()
         self.opts[high_pass.Filter.GAUSSIAN_LAPLACE].setSingleStep(0.5)
         self.opts[high_pass.Filter.GAUSSIAN_LAPLACE].setRange(1, 11)
-
-        borderMode = [value for _, value in high_pass.BorderLabel.items()]
-        self.opts[high_pass.Filter.LAPLACE] = QComboBox()
-        self.opts[high_pass.Filter.LAPLACE].addItems(borderMode)
-
-        self.opts[high_pass.Filter.PREWITT] = QComboBox()
-        self.opts[high_pass.Filter.PREWITT].addItems(borderMode)
-
-        self.opts[high_pass.Filter.SOBEL] = QComboBox()
-        self.opts[high_pass.Filter.SOBEL].addItems(borderMode)
                 
         optsLayout = QVBoxLayout()
+        optsLayout.setContentsMargins(0, 0, 0, 0)
         for key, opt in self.opts.items():
             if key != high_pass.Filter.GAUSSIAN_LAPLACE:
                 opt.setEnabled(False)
                 
             optsLayout.addWidget(opt)
 
+        for _ in range(4):
+            optsLayout.addItem(
+                QSpacerItem(0, 0, QSizePolicy.Expanding, QSizePolicy.Expanding)
+            )
+            
         optsWidget = QWidget()
         optsWidget.setLayout(optsLayout)
 
@@ -81,7 +83,8 @@ class DialogHighPass(QDialog):
         self.radioButtons[high_pass.Filter.GAUSSIAN_LAPLACE] = QRadioButton()
         self.radioButtons[high_pass.Filter.GAUSSIAN_LAPLACE].setChecked(False)
         self.radioButtons[high_pass.Filter.GAUSSIAN_LAPLACE]. \
-            clicked.connect(lambda: self.selectFilter(high_pass.Filter.GAUSSIAN_LAPLACE))
+            clicked.connect(lambda: self.selectFilter(high_pass.Filter.
+                                                      GAUSSIAN_LAPLACE))
 
         self.radioButtons[high_pass.Filter.LAPLACE] = QRadioButton()
         self.radioButtons[high_pass.Filter.LAPLACE].setChecked(False)
@@ -97,6 +100,11 @@ class DialogHighPass(QDialog):
         self.radioButtons[high_pass.Filter.SOBEL].setChecked(False)
         self.radioButtons[high_pass.Filter.SOBEL]. \
             clicked.connect(lambda: self.selectFilter(high_pass.Filter.SOBEL))
+
+        self.radioButtons[high_pass.Filter.ROBERTS] = QRadioButton()
+        self.radioButtons[high_pass.Filter.ROBERTS].setChecked(False)
+        self.radioButtons[high_pass.Filter.ROBERTS]. \
+            clicked.connect(lambda: self.selectFilter(high_pass.Filter.ROBERTS))
         
         radioButtonsLayout = QVBoxLayout()
         radioButtonsLayout.setContentsMargins(0, 0, 0, 0)
@@ -131,8 +139,12 @@ class DialogHighPass(QDialog):
 
 
     def getFilter(self):
+        opt = None
+        if self.selectedKey in self.opts:
+            opt = self.opts[self.selectedKey].currentText()
+            
         self.selectedFilter = {'filter': self.selectedKey,
-                               'opt': self.opts[self.selectedKey].currentText()}
+                               'opt': opt}
 
         return self.accept()
     
@@ -143,7 +155,9 @@ class DialogHighPass(QDialog):
         for key, _ in self.radioButtons.items():
             selected = key == selectedKey
             self.labels[key].setEnabled(selected)
-            self.opts[key].setEnabled(selected)
+
+            if key in self.opts:
+                self.opts[key].setEnabled(selected)
 
         self.selectedKey = selectedKey
 

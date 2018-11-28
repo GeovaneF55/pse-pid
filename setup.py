@@ -9,6 +9,7 @@ setup(
         'matplotlib',
         'numpy',
         'scipy',
+        'scikit-image',
         'opencv-python',
         'pyqt5 >= 5.11.3',
         'pillow',

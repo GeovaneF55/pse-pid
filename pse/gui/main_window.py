@@ -141,8 +141,10 @@ class MainWindow(QMainWindow):
 
         elif data['filter'] in high_pass.Filter:
             filterFn = high_pass.applyFilter
-            label = high_pass.FilterLabel[data['filter']] + \
-                ' ({})'.format(data['opt'])
+            label = high_pass.FilterLabel[data['filter']]
+
+            if data['filter'] == high_pass.Filter.GAUSSIAN_LAPLACE:
+                label += ' ({})'.format(data['opt'])
             
         elif data['filter'] in morph.Filter:
             filterFn = morph.applyFilter
