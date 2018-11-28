@@ -14,7 +14,7 @@
   ```
   $ sudo apt update
   $ sudo apt install git
-  $ git clone https://github.com/pucminas-luigidomenico/comp-grafica.git [caminho/para/repositorio]
+  $ git clone https://github.com/GeovaneF55/pse-pid [caminho/para/repositorio]
   ``` 
   
 - Navegue até a pasta raíz do projeto e instale as dependências necessárias para a execução do programa (numpy, pyqt5):
