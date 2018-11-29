@@ -138,7 +138,7 @@ class MainWidget(QWidget):
         """
 
         image = image.resize((MainWidget.IMAGE_DIM, MainWidget.IMAGE_DIM),
-                             Image.BICUBIC).convert('RGB')
+                             Image.BICUBIC)
 
         dim = image.size
         item = {'label': 'Original {}'.format(dim), 'image': image, 'dim': dim}
@@ -162,7 +162,7 @@ class MainWidget(QWidget):
 
         dim = image.size
         image = image.resize((MainWidget.IMAGE_DIM, MainWidget.IMAGE_DIM),
-                             Image.BICUBIC).convert('RGB')
+                             Image.BICUBIC)
 
         self.items.append({'label': label, 'image': image, 'dim': dim})
         self.fillGrid(self.items)

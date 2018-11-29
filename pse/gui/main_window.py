@@ -212,7 +212,7 @@ class MainWindow(QMainWindow):
         if not ok:
             return
 
-        image = Image.open(imagePath)
+        image = Image.open(imagePath).convert('L')
         self.centralWidget.insertOriginal(image)
 
    
