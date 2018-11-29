@@ -154,11 +154,12 @@ class MainWindow(QMainWindow):
         lastItem = len(self.centralWidget.items) - 1
         imageMatrix = numpy.array(self.centralWidget.items[lastItem]['image'])
         newImage = Image.fromarray(
-            filterFn(imageMatrix, row, data['filter'])
+            numpy.uint8(filterFn(imageMatrix, row, data['filter']))
         )
 
         label += ' {}'.format(newImage.size)
         self.centralWidget.insertProcessed(newImage, label)
+
 
     def applyHighPass(self):
         (data, ok) = DialogHighPass.getResults(self)
