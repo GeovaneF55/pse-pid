@@ -52,10 +52,10 @@ class DialogLowPass(QDialog):
         self.opts = {}
         # M: Passa-Baixa
         self.opts[low_pass.Filter.BOX] = QComboBox()
-        self.opts[low_pass.Filter.BOX].addItems(['3x3', '5x5', '7x7'])
+        self.opts[low_pass.Filter.BOX].addItems(['3x3', '5x5', '7x7', '9x9', '11x11'])
 
         self.opts[low_pass.Filter.MEDIAN] = QComboBox()
-        self.opts[low_pass.Filter.MEDIAN].addItems(['3x3', '5x5', '7x7'])
+        self.opts[low_pass.Filter.MEDIAN].addItems(['3x3', '5x5', '7x7', '9x9', '11x11'])
 
         self.opts[low_pass.Filter.GAUSSIAN] = DoubleTextSpinBox()
         self.opts[low_pass.Filter.GAUSSIAN].setSingleStep(0.5)

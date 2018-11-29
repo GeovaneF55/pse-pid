@@ -54,16 +54,16 @@ class DialogMorph(QDialog):
 
         # M: Morfológicos
         self.opts[morph.Filter.DILATION] = QComboBox()
-        self.opts[morph.Filter.DILATION].addItems(['3x3', '5x5', '7x7'])
+        self.opts[morph.Filter.DILATION].addItems(['3x3', '5x5', '7x7', '9x9', '11x11'])
 
         self.opts[morph.Filter.EROSION] = QComboBox()
-        self.opts[morph.Filter.EROSION].addItems(['3x3', '5x5', '7x7'])
+        self.opts[morph.Filter.EROSION].addItems(['3x3', '5x5', '7x7', '9x9', '11x11'])
 
         self.opts[morph.Filter.OPENING] = QComboBox()
-        self.opts[morph.Filter.OPENING].addItems(['3x3', '5x5', '7x7'])
+        self.opts[morph.Filter.OPENING].addItems(['3x3', '5x5', '7x7', '9x9', '11x11'])
 
         self.opts[morph.Filter.CLOSING] = QComboBox()
-        self.opts[morph.Filter.CLOSING].addItems(['3x3', '5x5', '7x7'])
+        self.opts[morph.Filter.CLOSING].addItems(['3x3', '5x5', '7x7', '9x9', '11x11'])
                 
         optsLayout = QVBoxLayout()
         optsLayout.setContentsMargins(0, 0, 0, 0)
