@@ -58,7 +58,7 @@ class DialogHighPass(QDialog):
         # M: Passa-Alta
         self.opts[high_pass.Filter.GAUSSIAN_LAPLACE] = DoubleTextSpinBox()
         self.opts[high_pass.Filter.GAUSSIAN_LAPLACE].setSingleStep(0.5)
-        self.opts[high_pass.Filter.GAUSSIAN_LAPLACE].setRange(1, 11)
+        self.opts[high_pass.Filter.GAUSSIAN_LAPLACE].setRange(0, 11)
                 
         optsLayout = QVBoxLayout()
         optsLayout.setContentsMargins(0, 0, 0, 0)
