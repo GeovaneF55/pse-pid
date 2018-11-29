@@ -81,7 +81,7 @@ class DialogHighPass(QDialog):
         
         # S: Passa-Alta
         self.radioButtons[high_pass.Filter.GAUSSIAN_LAPLACE] = QRadioButton()
-        self.radioButtons[high_pass.Filter.GAUSSIAN_LAPLACE].setChecked(False)
+        self.radioButtons[high_pass.Filter.GAUSSIAN_LAPLACE].setChecked(True)
         self.radioButtons[high_pass.Filter.GAUSSIAN_LAPLACE]. \
             clicked.connect(lambda: self.selectFilter(high_pass.Filter.
                                                       GAUSSIAN_LAPLACE))

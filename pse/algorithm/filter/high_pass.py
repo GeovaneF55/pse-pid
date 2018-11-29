@@ -113,7 +113,7 @@ def gaussianLaplaceFilter(image, sigma):
     @return matriz com novos valores após aplicação do filtro.
     """
 
-    gaussian = gaussian_rgb(image.copy(), float(sigma))
+    gaussian = gaussian_rgb(image, sigma)
     return laplace_rgb(gaussian) * 255
 
 

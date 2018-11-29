@@ -153,9 +153,7 @@ class MainWindow(QMainWindow):
 
         lastItem = len(self.centralWidget.items) - 1
         imageMatrix = numpy.array(self.centralWidget.items[lastItem]['image'])
-        newImage = Image.fromarray(
-            numpy.uint8(filterFn(imageMatrix, row, data['filter']))
-        )
+        newImage = Image.fromarray(filterFn(imageMatrix, row, data['filter']))
 
         label += ' {}'.format(newImage.size)
         self.centralWidget.insertProcessed(newImage, label)
@@ -164,7 +162,11 @@ class MainWindow(QMainWindow):
     def applyHighPass(self):
         (data, ok) = DialogHighPass.getResults(self)
 
+        if data['filter'] == high_pass.Filter.GAUSSIAN_LAPLACE:
+            data['opt'] = float(data['opt'])
+            
         self.applyFilter(data, ok)
+        
 
     def applyLowPass(self):
         (data, ok) = DialogLowPass.getResults(self)
@@ -212,7 +214,7 @@ class MainWindow(QMainWindow):
         if not ok:
             return
 
-        image = Image.open(imagePath).convert('L')
+        image = Image.open(imagePath)
         self.centralWidget.insertOriginal(image)
 
    
