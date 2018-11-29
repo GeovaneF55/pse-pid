@@ -56,12 +56,19 @@ class DialogHistogram(QDialog):
         layout = QFormLayout(self)
         layout.addRow(rButtons) 
 
+        rLabels = QHBoxLayout()
         l1 = QLabel()
         l2 = QLabel()
 
+        rLabels.addWidget(l1)
+        rLabels.addWidget(l2)
+
+        l1.setText("Imagem Original") 
+        l2.setText("Última Imagem Processada")
+
+        layout.addRow(rLabels)
+
         #Adcionar o Histograma Img Original à Widget
-        l1.setText("Imagem Original")
-        layout.addRow(l1)
         l1.setFont(QFont("Arial", 14, 75, False))
         l1.setAlignment(Qt.AlignCenter)
         hLayout = QHBoxLayout()
@@ -70,14 +77,10 @@ class DialogHistogram(QDialog):
         self.imgLabelOri.setPixmap(pixmap)
         self.imgLabelOri.show()
         hLayout.addWidget(self.imgLabelOri)
-        layout.addRow(hLayout)
 
         #Adcionar o Histograma Img Processada à Widget
-        l2.setText("Última Imagem Processada")
-        layout.addRow(l2)
         l2.setFont(QFont("Arial", 14, 75, False))
         l2.setAlignment(Qt.AlignCenter)
-        hLayout = QHBoxLayout()
         self.imgLabelProc = QLabel()
         pixmap = QPixmap(HIST + 'hist_proc.png')
         self.imgLabelProc.setPixmap(pixmap)
