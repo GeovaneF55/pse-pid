@@ -1,6 +1,4 @@
 """ Bibliotecas externas. """
-from PIL import (Image,
-                 ImageQt)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QGridLayout,
@@ -10,14 +8,14 @@ from PyQt5.QtWidgets import (QGridLayout,
                              QWidget)
 
 class MainWidget(QWidget):
-    IMAGE_DIM = 256
+    PIXMAP_DIM = 256
     
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
                 
-        self.grid = {'rows': self.parent.height() // MainWidget.IMAGE_DIM,
-                     'cols': self.parent.width() // MainWidget.IMAGE_DIM}
+        self.grid = {'rows': self.parent.height() // MainWidget.PIXMAP_DIM,
+                     'cols': self.parent.width() // MainWidget.PIXMAP_DIM}
         
         self.items = []
 
@@ -27,7 +25,7 @@ class MainWidget(QWidget):
 
     def initUI(self):
         """ Inicializa o widget principal do programa, que
-        contém todas as imagens - original e processadas.
+        contém todas as pixmapns - original e processadas.
         """
         
         layout = QGridLayout()
@@ -38,11 +36,11 @@ class MainWidget(QWidget):
         super().resizeEvent(event)
 
         oldGrid = self.grid
-        self.grid = {'rows': self.parent.height() // MainWidget.IMAGE_DIM,
-                     'cols': self.parent.width() // MainWidget.IMAGE_DIM}
+        self.grid = {'rows': self.parent.height() // MainWidget.PIXMAP_DIM,
+                     'cols': self.parent.width() // MainWidget.PIXMAP_DIM}
 
         
-        # Caso grid não tenha mudado ou nenhuma imagem tenha sido carrregada,
+        # Caso grid não tenha mudado ou nenhuma pixmapm tenha sido carrregada,
         # nada a fazer.
         if self.grid == oldGrid or not self.items:
             return
@@ -85,9 +83,9 @@ class MainWidget(QWidget):
 
         
     def fillGrid(self, items):
-        """ Preencha o grid com as imagens e seus respectivos labels. """
+        """ Preencha o grid com as pixmapns e seus respectivos labels. """
 
-        # Caso imagem ainda não tenha sido carregada ou imagem original
+        # Caso pixmapm ainda não tenha sido carregada ou pixmapm original
         # não exista, retornar.
         if not items:
             return
@@ -97,13 +95,13 @@ class MainWidget(QWidget):
 
         # Preenche grid de forma que, caso a quantidade de itens não
         # seja suficiente para ocupar todo o grid, replique a ultima
-        # imagem.
+        # pixmapm.
         gridSize = (self.grid['rows'] * self.grid['cols'])
         numItems = len(items)
         item = 0
 
         # Caso tenha mais itens do que posições no grid, descartar
-        # as imagems mais antigas (com execessão da original)
+        # as pixmapms mais antigas (com execessão da original)
         if numItems > gridSize:
             start = numItems - gridSize + 1
             items = [items[0]] + items[start:]
@@ -111,8 +109,9 @@ class MainWidget(QWidget):
         for i in range(self.grid['rows']):
             for j in range(self.grid['cols']):
                 text = items[item]['label']
-                imageQt = ImageQt.ImageQt(items[item]['image'])
-                pixmap = QPixmap.fromImage(imageQt)
+                # pixmapQt = PixmapQt.PixmapQt(items[item]['pixmap'])
+                # pixmap = QPixmap.fromPixmap(pixmapQt)
+                pixmap = items[item]['pixmap']
 
                 self.addGridItem(text, pixmap, i, j)
 
@@ -120,9 +119,9 @@ class MainWidget(QWidget):
 
 
     def undo(self):
-        """ Retira a útima imagem processada da lista e
+        """ Retira a útima pixmapm processada da lista e
         recalcula a posição de réplica. Ação só é realizada
-        caso exista alguma imagem diferente da original.
+        caso exista alguma pixmapm diferente da original.
         """
 
         if len(self.items) > 1:
@@ -131,17 +130,16 @@ class MainWidget(QWidget):
             self.fillGrid(self.items)
 
 
-    def insertOriginal(self, image):
-        """ Insere a nova imagem em todas as posições do grid.
+    def insertOriginal(self, pixmap):
+        """ Insere a nova pixmapm em todas as posições do grid.
 
-        @param image PIL.Image
+        @param pixmap PIL.Pixmap
         """
 
-        image = image.resize((MainWidget.IMAGE_DIM, MainWidget.IMAGE_DIM),
-                             Image.BICUBIC).convert('L')
-
-        dim = image.size
-        item = {'label': 'Original {}'.format(dim), 'image': image, 'dim': dim}
+        pixmap = pixmap.scaled(256, 256, Qt.IgnoreAspectRatio,
+                               Qt.SmoothTransformation)
+        dim = (pixmap.width(), pixmap.height())
+        item = {'label': 'Original {}'.format(dim), 'pixmap': pixmap}
 
         self.items = [item]
         self.replicate = 0
@@ -149,20 +147,21 @@ class MainWidget(QWidget):
         self.fillGrid(self.items)
 
 
-    def insertProcessed(self, image, label):
-        """ Insere uma imagem recém processada no grid.
+    def insertProcessed(self, pixmap, label):
+        """ Insere uma pixmapm recém processada no grid.
         
-        @param image PIL.Image
+        @param pixmap PIL.Pixmap
         """
         
         # Variável usada para, caso grid não tenha sido completamente preenchido
-        # ainda (contém cópias de alguma imagem), setar a nova imagem como a que
+        # ainda (contém cópias de alguma pixmapm), setar a nova pixmapm como a que
         # será replicada.
+        
         self.replicate += 1
 
-        dim = image.size
-        image = image.resize((MainWidget.IMAGE_DIM, MainWidget.IMAGE_DIM),
-                             Image.BICUBIC).convert('L')
+        pixmap = pixmap.scaled(256, 256, Qt.IgnoreAspectRatio,
+                               Qt.SmoothTransformation)
+        dim = (pixmap.width(), pixmap.height())
 
-        self.items.append({'label': label, 'image': image, 'dim': dim})
+        self.items.append({'label': label, 'pixmap': pixmap})
         self.fillGrid(self.items)

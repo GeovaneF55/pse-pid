@@ -1,8 +1,13 @@
-from PIL import Image
+from scipy import ndimage
 
-def nearest_neighbor(image, dim, scale):
-    (width, height) = dim
-    width = round(width * scale)
-    height = round(height * scale)
+def nearest_neighbor(image, scale):
+    """ Aplica a nterpolação por vizinho mais próximo.
+    
+    @param image numpy array.
+    @param dim tupla contendo as dimensões originais.
+    @param scale valor escalar para redimensionamento.
+    
+    @return numpy array.
+    """
 
-    return image.resize((width, height), Image.NEAREST)
+    return ndimage.zoom(image, (scale, scale, 1), mode='nearest')

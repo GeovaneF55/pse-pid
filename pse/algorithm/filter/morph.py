@@ -2,6 +2,7 @@
 from enum import Enum
 import numpy
 from scipy import ndimage
+from skimage import color
 
 Filter = Enum('Filter', 'CLOSING DILATION EROSION OPENING')
 FilterLabel = {
@@ -23,6 +24,7 @@ def applyFilter(image, maskSize, filterKey):
         Filter.OPENING: openingFilter,
     }
 
+    image = color.rgb2gray(image) * 255
     return filters[filterKey](image, maskSize)
 
 
@@ -49,6 +51,7 @@ def dilationFilter(image, mask):
         return ndimage.binary_dilation(image, structure=structure)
     else:
         return ndimage.grey_dilation(image, structure=structure)
+    
 
     
 def erosionFilter(image, mask):

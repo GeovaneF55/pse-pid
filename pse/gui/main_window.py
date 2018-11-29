@@ -1,7 +1,7 @@
 """ Bibliotecas externas. """
 import numpy
-from PIL import (Image,
-                 ImageQt)
+from qimage2ndarray import (rgb_view,
+                            array2qimage)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import (QIcon,
                          QPixmap)
@@ -152,17 +152,21 @@ class MainWindow(QMainWindow):
                 ' ({})'.format(data['opt'])
 
         lastItem = len(self.centralWidget.items) - 1
-        imageMatrix = numpy.array(self.centralWidget.items[lastItem]['image'])
-        newImage = Image.fromarray(filterFn(imageMatrix, row, data['filter']))
+        image = self.centralWidget.items[lastItem]['pixmap'].toImage()
+        imageMatrix = rgb_view(image)
 
-        label += ' {}'.format(newImage.size)
+        newImage = QPixmap.fromImage(
+            array2qimage(filterFn(imageMatrix, row, data['filter']))
+        )
+
+        label += ' {}'.format((newImage.width(), newImage.height()))
         self.centralWidget.insertProcessed(newImage, label)
 
 
     def applyHighPass(self):
         (data, ok) = DialogHighPass.getResults(self)
 
-        if data['filter'] == high_pass.Filter.GAUSSIAN_LAPLACE:
+        if data['opt'] and data['filter'] == high_pass.Filter.GAUSSIAN_LAPLACE:
             data['opt'] = float(data['opt'])
             
         self.applyFilter(data, ok)
@@ -170,40 +174,48 @@ class MainWindow(QMainWindow):
 
     def applyLowPass(self):
         (data, ok) = DialogLowPass.getResults(self)
-        
+
+        if data['opt'] and data['filter'] == low_pass.Filter.GAUSSIAN:
+            data['opt'] = float(data['opt'])
+            
         self.applyFilter(data, ok)
 
+        
     def applyMorph(self):
         (data, ok) = DialogMorph.getResults(self)
 
         self.applyFilter(data, ok)
 
+        
     def applyInterpolation(self):
         (data, ok) = DialogInterpolation.getResults(self)
 
         if not ok or not self.centralWidget.items:
             return
 
-        lastItem = len(self.centralWidget.items) - 1
-                                
-        newImage = interpolation \
-            .nearest_neighbor(self.centralWidget.items[lastItem]['image'],
-                              self.centralWidget.items[lastItem]['dim'],
-                              data['scale'])
+        if data['scale']:
+            scale = float(data['scale'])
+            
+            lastItem = len(self.centralWidget.items) - 1
+            proc = rgb_view(self.centralWidget.items[lastItem]['pixmap'].toImage())
+            
+            newImage = QPixmap.fromImage(
+                array2qimage(interpolation.nearest_neighbor(proc, scale))
+            )
 
-        self.centralWidget.insertProcessed(
-            newImage,
-            '{} {}'.format(data['type'], newImage.size)
-        )
+            self.centralWidget.insertProcessed(
+                newImage,
+                '{} {}'.format(data['type'], (newImage.width(), newImage.height()))
+            )
         
 
     def plotHistogram(self):
         lastItem = len(self.centralWidget.items) - 1
 
         if lastItem >= 0:
-            DialogHistogram.getResults(self.centralWidget.items[0]['image'],
-                                       self.centralWidget.items[lastItem]['image'],
-                                       self)
+            orig = self.centralWidget.items[0]['pixmap'].toImage()
+            proc = self.centralWidget.items[lastItem]['pixmap'].toImage()
+            DialogHistogram.getResults(orig, proc, self)
 
             
     def getImage(self):
@@ -214,7 +226,7 @@ class MainWindow(QMainWindow):
         if not ok:
             return
 
-        image = Image.open(imagePath)
+        image = QPixmap(imagePath)
         self.centralWidget.insertOriginal(image)
 
    

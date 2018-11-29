@@ -1,4 +1,5 @@
 """ Bibliotecas externas. """
+import numpy
 from enum import Enum
 from scipy.ndimage import filters
 
@@ -34,10 +35,8 @@ def boxFilter(image, mask):
     @return matriz com novos valores após aplicação do filtro.
     """
 
-    maskDims = [int(dim) for dim in mask.split('x')]
-    weight = 1 / (maskDims[0] * maskDims[1])
-    weights = [[weight for j in range(maskDims[1])] for i in range(maskDims[0])]
-    return filters.convolve(image, weights)
+    maskDims = list(map(int, mask.split('x')))
+    return filters.uniform_filter(image, (maskDims[0], maskDims[1], 1))
 
 
 def medianFilter(image, mask):
@@ -50,8 +49,8 @@ def medianFilter(image, mask):
 
     @return matriz com novos valores após aplicação do filtro.
     """
-    (row, col) = [int(dim) for dim in mask.split('x')]
-    return filters.median_filter(image, (row, col))
+    maskDims = list(map(int, mask.split('x')))
+    return filters.median_filter(image, (maskDims[0], maskDims[1], 1))
 
 
 def gaussianFilter(image, sigma):
@@ -65,4 +64,4 @@ def gaussianFilter(image, sigma):
     @return matriz com novos valores após aplicação do filtro.
     """
 
-    return filters.gaussian_filter(image, float(sigma))
+    return filters.gaussian_filter(image, (sigma, sigma, 0))

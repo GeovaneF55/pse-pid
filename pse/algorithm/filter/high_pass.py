@@ -39,7 +39,7 @@ def gaussian_rgb(image, sigma):
     @return result numpy.ndarray.
     """
 
-    return filters.gaussian(image, sigma)
+    return filters.gaussian(image, sigma, sigma)
 
 
 @adapt_rgb(each_channel)
@@ -54,6 +54,7 @@ def laplace_rgb(image):
     """
 
     return filters.laplace(image)
+
 
 @adapt_rgb(each_channel)
 def prewitt_rgb(image):
