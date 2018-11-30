@@ -73,7 +73,7 @@
   $ python .\pse
   
 ## Manual do Usuário
-[Vídeo de Demonstração](https://youtu.be/Pze5D69Sipw)  
+[Vídeo de Demonstração](https://youtu.be/FUVDooJn3ZA) 
 [Manual](doc/MANUAL.md)
 
 ## Documentação
