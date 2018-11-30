@@ -195,17 +195,19 @@ class MainWindow(QMainWindow):
 
         if data['scale']:
             scale = float(data['scale'])
+
+            order = self.interpolationOrder(data['order']) if data['order'] else 0
             
             lastItem = len(self.centralWidget.items) - 1
             proc = rgb_view(self.centralWidget.items[lastItem]['pixmap'].toImage())
             
             newImage = QPixmap.fromImage(
-                array2qimage(interpolation.nearest_neighbor(proc, scale))
+                array2qimage(interpolation.nearest_neighbor(proc, scale, order))
             )
 
             self.centralWidget.insertProcessed(
                 newImage,
-                '{} {}'.format(data['type'], (newImage.width(), newImage.height()))
+                '{} {}'.format(data['order'], (newImage.width(), newImage.height()))
             )
         
 
@@ -217,6 +219,17 @@ class MainWindow(QMainWindow):
             proc = self.centralWidget.items[lastItem]['pixmap'].toImage()
             DialogHistogram.getResults(orig, proc, self)
 
+    def interpolationOrder(self, order):
+        if 'Vizinho Mais Próximo' == order:
+            ord = 0
+        elif 'Bilinear' == order:
+            ord = 1
+        elif 'Bicúbica' == order:
+            ord = 2
+        else:
+            ord = 0
+
+        return ord
             
     def getImage(self):
         (imagePath, ok) = QFileDialog \
