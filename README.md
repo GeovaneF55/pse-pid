@@ -72,5 +72,8 @@
   ```
   $ python .\pse
   
-### Manual do Usuário
+## Manual do Usuário
 [manual do usuário](link)
+
+## Documentação
+[PSE](doc/PSE.md)
