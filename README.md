@@ -74,7 +74,7 @@
   
 ## Manual do Usuário
 [Vídeo de Demonstração](https://youtu.be/Pze5D69Sipw)  
-[manual do usuário](doc/MANUAL.md)
+[Manual](doc/MANUAL.md)
 
 ## Documentação
 [PSE](doc/PSE.md)
