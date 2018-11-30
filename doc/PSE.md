@@ -36,7 +36,7 @@ Para cada localização a ser interpolada deverá ser calculado a distância de 
 localização e determinar qual deles terá a distância mínima sendo o valor correspondente a interpolação. Sendo (x0 , y0) 
 as amostra é feita o cálculo da distância.
  
-![](figures/interpolador_vizinhomaisproximo.PNG)  
+![](figures/interpolador_vizinhomaisproximo.png)  
 *Parâmetro: Ampliação/Redução: 0.10 / 0.50*
 
 #### Interpolador Bilinear
@@ -101,7 +101,7 @@ O Filtro de Prewitt trata-se de um operador de diferença, computando uma aproxi
 
 Baseia-se em realizar uma pequena e separável operação de convolução, nas direções vertical e horizontal separadamente, e portanto obtendo um custo computacional relativamente baixo.
 
-![](figures/prewitt.PNG)  
+![](figures/prewitt.png)  
 
 #### Sobel
 O filtro de Sobel é uma operação aplicada sobretudo em algoritmos de detecção de contornos. Consiste num operador que calcula diferenças finitas, dando uma aproximação do gradiente da intensidade dos pixels da imagem. Em cada ponto da imagem, o resultado da aplicação do filtro Sobel devolve o gradiente ou a norma deste vector.  
@@ -122,7 +122,7 @@ São filtros utilizados após o processo de segmentação da imagem, com o objet
 #### Dilatação
 A transformação morfológica por dilatação combina dois conjuntos utilizando adição vetorial. A dilatação preenche buracos, lacunas podendo reparar instruções. O problema que aumenta o objeto da imagem.
 
-![](figures/ditalação.PNG)
+![](figures/dilatação.PNG)
 
 #### Erosão
 A transformação morfológica de erosão é o oposto da dilatação, escolher o valor mínimo dos pixels sobrepostos do elemento estruturante na imagem. Combinando dois conjuntos utilizando subtração vetorial. Serve para separar objetos, podendo remover extrusões. O problema dele está em diminuir o tamanho do objeto.  
